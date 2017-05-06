@@ -1,0 +1,10 @@
+{
+	"name": "integratedCircuitry",
+	"version": "0.0.1",
+	"title": "Integrated Circuitry",
+	"author": "judos",
+	"description": "Add several combinators used to achieve much more complex circuit logic",
+	"dependencies": ["base >= 0.15.0"],
+	"homepage": "https://github.com/judos/integratedCircuitry",
+	"factorio_version": "0.15"
+}

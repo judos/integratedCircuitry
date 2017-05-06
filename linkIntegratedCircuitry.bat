@@ -1,0 +1,1 @@
+mklink /j "mods/integratedCircuitry_0.0.1" "D:\modding\factorio\integratedCircuitry\source"
