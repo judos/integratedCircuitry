@@ -32,6 +32,7 @@ local maxRecentEntries = 20
 GROUP_ITEM = "item"
 GROUP_FLUID = "fluid"
 GROUP_SIGNAL = "virtual-signal"
+GROUP_SPECIAL1 = "special1"
 GROUP_ALL = {GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL}
 
 ------------------------------------
@@ -168,15 +169,17 @@ itemSelection_open = function(player,types,callback)
 		end
 	end
 
-	frame.add{type="table",name="special",colspan=2}
-	frame.special.add{type="label",name="title",caption={"",{"special"},":"}}
-	frame.special.add{type="table",name="itemsX",colspan=1}
-	frame.special.itemsX.add(checkBoxForItem("item","belt-sorter-everythingelse"))
-
+	if playerData.showGroups[GROUP_SPECIAL1] then
+		frame.add{type="table",name="special",colspan=2}
+		frame.special.add{type="label",name="title",caption={"",{"special"},":"}}
+		frame.special.add{type="table",name="itemsX",colspan=1}
+		frame.special.itemsX.add(checkBoxForItem("item","belt-sorter-everythingelse"))
+	end
+	
 	frame.add{type="table",name="search",colspan=2}
 	frame.search.add{type="label",name="title",caption={"",{"search"},":"}}
 	frame.search.add{type="textfield",name="itemSelection.field"}
-
+	
 	rebuildItemList(player)
 	-- Store reference for callback
 
