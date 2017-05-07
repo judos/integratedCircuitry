@@ -196,8 +196,10 @@ itemSelection_gui_event = function(guiEvent,player)
 			playerData.filter = filter
 			rebuildItemList(player)
 		end
-		gui_scheduleEvent("itemSelection.updateFilter",player)
-	elseif table.set(GROUP_ALL)[fieldName] then
+		if player.gui.left.itemSelection.valid then
+			gui_scheduleEvent("itemSelection.updateFilter",player)
+		end
+	elseif table.set(GROUP_ALL)[fieldName] then -- if any slot was clicked of any group
 		local itemName = guiEvent[2]
 		selectItem(playerData,player,fieldName,itemName)
 	else
