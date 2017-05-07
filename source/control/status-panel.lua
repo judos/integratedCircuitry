@@ -13,7 +13,10 @@ local m = {} --used for methods of the statusPanel
 
 -- Used data:
 -- {
---   
+--   sprite = luaEntity(car object showing the sprite)
+--   min = integer(min value to show red)
+--   max = integer(max value to show green)
+--   signal = table( group = string(item,fluid,virtual_signal), name = string)
 -- }
 
 --------------------------------------------------
@@ -41,7 +44,10 @@ statusPanel.build = function(entity)
 	sprite.destructible = false
 	sprite.minable = false
 	return {
-		sprite = sprite
+		sprite = sprite,
+		min = 0,
+		max = 100,
+		signal = nil
 	}
 end
 
@@ -69,6 +75,7 @@ gui["status-panel"].open = function(player,entity)
 	if player.gui.left.statusPanel then
 		player.gui.left.statusPanel.destroy()
 	end
+	
 	local frame = player.gui.left.add{type="frame",name="statusPanel",direction="vertical",caption={"status-panel"}}
 	frame.add{type="label",name="description",caption={"status-panel-description"}}
 	frame.add{type="table",name="table",colspan=2}
@@ -81,6 +88,8 @@ gui["status-panel"].open = function(player,entity)
 	
 	frame.table.add{type="label",name="max",caption={"",{"green_value"},":"}}
 	frame.table.add{type="textfield",name="green_value"}
+	
+	m.updateGui(player,entity)
 end
 
 gui["status-panel"].close = function(player)
@@ -99,7 +108,7 @@ gui["status-panel"].click = function(nameArr,player,entity)
 			itemSelection_open(player,{GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL},function(arr)
 				box.sprite = arr.group.."/"..arr.name
 				box.tooltip = arr.prototype.localised_name
-				--TODO: do something
+				m.setSignal(player,entity,arr)
 			end)
 		else
 			box.sprite = ""
@@ -109,8 +118,43 @@ gui["status-panel"].click = function(nameArr,player,entity)
 	end
 end
 
-m.method = function(player,entity)
+m.setSignal = function(player,entity,arr)
+	local data = global.entityData[idOfEntity(entity)]
+	if not arr then
+		data.signal = nil
+		return
+	end
+	data.signal = {
+		name = arr.name,
+		group = arr.group
+	}
+	data.min = 0
+	if group == GROUP_ITEM then
+		data.max = arr.prototype.stack_size
+		info(arr.prototype.subgroup.name)
+	elseif group == GROUP_FLUID then
+		data.max = 25000
+	elseif group == GROUP_SIGNAL then
+		data.max = 100
+	end
+	m.updateGui(player,entity)
+end
 
+m.updateGui = function(player,entity)
+	local data = global.entityData[idOfEntity(entity)]
+	
+	local tab = player.gui.left.statusPanel.table
+	tab.red_value.text = data.min
+	tab.green_value.text = data.max
+	local signal = tab["integratedCircuitry.signal"]
+	if data.signal then
+		signal.sprite = data.signal.group.."/"..data.signal.name
+		local prototypes = itemSelection_prototypesForGroup(data.signal.group)
+		signal.tooltip = prototypes[data.signal.name].localised_name
+	else
+		signal.sprite = ""
+		signal.tooltip = ""
+	end		
 end
 
 ---------------------------------------------------

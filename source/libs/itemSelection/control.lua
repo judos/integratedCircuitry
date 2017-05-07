@@ -16,6 +16,9 @@ local maxRecentEntries = 20
 -- Call this to migrate when updating the library to 2.9
 -- itemSelection_migration_2_9()
 
+-- Resolve a group name into the factorio prototypes array
+-- itemSelection_prototypesForGroup(group)
+
 --------------------------------------------------
 -- Global data
 --------------------------------------------------
@@ -46,18 +49,8 @@ local function initGuiForPlayerName(playerName)
 	if is[playerName].recent == nil then is[playerName].recent = {} end
 end
 
-local function prototypesForGroup(group)
-	if group == GROUP_ITEM then
-		return game.item_prototypes
-	elseif group == GROUP_FLUID then
-		return game.fluid_prototypes
-	elseif group == GROUP_SIGNAL then
-		return game.virtual_signal_prototypes
-	end
-end
-
 local function checkBoxForItem(group,name)
-	local prototype = prototypesForGroup(group)[name]
+	local prototype = itemSelection_prototypesForGroup(group)[name]
 	local tip = prototype.localised_name
 	return {
 		type = "sprite-button",
@@ -84,7 +77,7 @@ local function selectItem(playerData,player,group,itemName)
 		global.itemSelection[player.name].callback({
 			name=itemName,
 			group=group,
-			prototype=prototypesForGroup(group)[itemName]
+			prototype=itemSelection_prototypesForGroup(group)[itemName]
 		})
 		global.itemSelection[player.name].callback = nil
 	end
@@ -111,7 +104,7 @@ local function rebuildItemList(player)
 	
 	for _,group in pairs(GROUP_ALL) do
 		if showGroups[group] then
-			for name,prototype in pairs(prototypesForGroup(group)) do
+			for name,prototype in pairs(itemSelection_prototypesForGroup(group)) do
 				local specialCondition = true
 				if group == GROUP_ITEM then
 					specialCondition = not prototype.has_flag("hidden")
@@ -211,6 +204,17 @@ itemSelection_gui_event = function(guiEvent,player)
 		warn("Unknown fieldName for itemSelection_gui_event: "..tostring(fieldName))
 	end
 end
+
+itemSelection_prototypesForGroup = function(group)
+	if group == GROUP_ITEM then
+		return game.item_prototypes
+	elseif group == GROUP_FLUID then
+		return game.fluid_prototypes
+	elseif group == GROUP_SIGNAL then
+		return game.virtual_signal_prototypes
+	end
+end
+
 
 -- The format how recent objects were stored has changed, therefore this table needs to be cleared
 itemSelection_migration_2_9 = function()
