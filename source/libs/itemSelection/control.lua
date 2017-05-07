@@ -7,17 +7,24 @@ local maxRecentEntries = 20
 --------------------------------------------------
 
 -- call this to open the item selection gui
--- player: LuaPlayer
--- method: function(itemName) callback which is executed when an item has been selected
--- itemSelection_open(player, method)
+-- @param player: Object of the player opening the gui
+-- @param types: array of things to show {"items", "fluids", "signals"}
+-- @param callback: Passed function used as callback when action is taken
+--		accept a table with: {group=$,name=$,prototype=$}
+-- itemSelection_open(player, types, callback)
+
+-- Call this to migrate when updating the library to 2.9
+-- itemSelection_migration_2_9()
 
 --------------------------------------------------
 -- Global data
 --------------------------------------------------
 
 -- This helper file uses the following global data variables:
--- global.itemSelection[$playerName].recent= { $itemName1, $itemName2, ... }
+-- global.itemSelection[$playerName]
+--				.recent= { {$group, $name}, {"item", "iron-plate"}, {"fluid", "water"}, ... }
 --        .callback = function($itemName)
+--				.showGroups = set of values. e.g: { "items"=true, "fluids"=true, "signals"=true }
 
 ------------------------------------
 -- Helper methods
@@ -30,24 +37,29 @@ local function initGuiForPlayerName(playerName)
 	if is[playerName].recent == nil then is[playerName].recent = {} end
 end
 
-local function checkBoxForItem(itemName)
-	local item = game.item_prototypes[itemName]
-	local tip = item.localised_name
+local function checkBoxForItem(group,name)
+	local prototype
+	if group == "item" then
+		prototype = game.item_prototypes[name]
+	elseif group == "fluid" then
+		prototype = game.fluid_prototypes[name]
+	end
+	local tip = prototype.localised_name
 	return {
 		type = "sprite-button",
-		name = "itemSelection.item."..itemName,
+		name = "itemSelection.item."..name,
 		style = "slot_button_style",
 		tooltip = tip,
-		sprite = "item/"..itemName
+		sprite = group.."/"..name
 	}
 end
 
 local function selectItem(playerData,player,itemName)
 	-- add to recent items
-	table.insert(playerData.recent,1,itemName)
+	table.insert(playerData.recent,1,{"item",itemName}) --TODO:insert correct group here
 	-- prevent duplicates
 	for i=#playerData.recent,2,-1 do
-		if playerData.recent[i] == itemName then table.remove(playerData.recent,i) end
+		if playerData.recent[i][2] == itemName then table.remove(playerData.recent,i) end
 	end
 	-- remove oldest items from history
 	if #playerData.recent > maxRecentEntries then
@@ -76,13 +88,29 @@ local function rebuildItemList(player)
 	local items = scroll.add{type="table",name="itemsX",colspan=mainMaxEntries}
 	
 	local filter = frame.search["itemSelection.field"].text
-	for name,prototype in pairs(game.item_prototypes) do
-		if not prototype.has_flag("hidden") and (filter == "" or string.find(name,filter)) then
-			local checkbox = checkBoxForItem(name)
-			local status, err = pcall(function() items.add(checkbox) end)
-			if not status then
-				warn("Error occured with item: "..name..". The style is missing probably because item was registered in data-final-fixes.lua instead of before. The item will not be displayed in the list.")
-				warn(err)
+	local playerData = global.itemSelection[player.name]
+	local showGroups = playerData.showGroups
+	if showGroups["items"] then
+		for name,prototype in pairs(game.item_prototypes) do
+			if not prototype.has_flag("hidden") and (filter == "" or string.find(name,filter)) then
+				local checkbox = checkBoxForItem("item",name)
+				local status, err = pcall(function() items.add(checkbox) end)
+				if not status then
+					warn("Error occured with item: "..name..".")
+					warn(err)
+				end
+			end
+		end
+	end
+	if showGroups["fluids"] then
+		for name,prototype in pairs(game.fluid_prototypes) do
+			if (filter == "" or string.find(name,filter)) then
+				local checkbox = checkBoxForItem("fluid",name)
+				local status, err = pcall(function() items.add(checkbox) end)
+				if not status then
+					warn("Error occured with fluid: "..name..".")
+					warn(err)
+				end
 			end
 		end
 	end
@@ -101,9 +129,11 @@ itemSelection_close = function(player)
 	playerData.callback = nil
 end
 
-itemSelection_open = function(player,method)
+
+itemSelection_open = function(player,types,callback)
 	initGuiForPlayerName(player.name)
 	local playerData = global.itemSelection[player.name]
+	playerData.showGroups = types
 
 	if player.gui.left.itemSelection ~= nil then
 		itemSelection_close(player)
@@ -117,15 +147,19 @@ itemSelection_open = function(player,method)
 		frame.add{type="table",name="recent",colspan=2}
 		frame.recent.add{type="label",name="title",caption={"",{"recent"},":"}}
 		local items = frame.recent.add{type="table",name="itemsX",colspan=#playerData.recent}
-		for _,itemName in pairs(playerData.recent) do
-			items.add(checkBoxForItem(itemName))
+		for _,recentTable in pairs(playerData.recent) do
+			if type(recentTable) == "string" then
+				playerData.recent = {}
+				break
+			end
+			items.add(checkBoxForItem(recentTable[1],recentTable[2]))
 		end
 	end
 
 	frame.add{type="table",name="special",colspan=2}
 	frame.special.add{type="label",name="title",caption={"",{"special"},":"}}
 	frame.special.add{type="table",name="itemsX",colspan=1}
-	frame.special.itemsX.add(checkBoxForItem("belt-sorter-everythingelse"))
+	frame.special.itemsX.add(checkBoxForItem("item","belt-sorter-everythingelse"))
 
 	frame.add{type="table",name="search",colspan=2}
 	frame.search.add{type="label",name="title",caption={"",{"search"},":"}}
@@ -134,7 +168,7 @@ itemSelection_open = function(player,method)
 	rebuildItemList(player)
 	-- Store reference for callback
 
-	global.itemSelection[player.name].callback = method
+	global.itemSelection[player.name].callback = callback
 	global.itemSelection[player.name].filter = ""
 	gui_scheduleEvent("itemSelection.updateFilter",player)
 end
@@ -160,6 +194,13 @@ itemSelection_gui_event = function(guiEvent,player)
 		selectItem(playerData,player,itemName)
 	else
 		warn("Unknown fieldName for itemSelection_gui_event: "..tostring(fieldName))
+	end
+end
+
+-- The format how recent objects were stored has changed, therefore this table needs to be cleared
+itemSelection_migration_2_9 = function()
+	for playerName, arr in pairs(global.itemSelection) do
+		arr.recent = {}
 	end
 end
 

@@ -96,10 +96,9 @@ gui["status-panel"].click = function(nameArr,player,entity)
 	if fieldName == "signal" then
 		local box = player.gui.left.statusPanel.table["integratedCircuitry.signal"]
 		if box.sprite == "" then
-			itemSelection_open(player,function(itemName)
-				local tip = game.item_prototypes[itemName].localised_name
-				box.sprite = "item/"..itemName
-				box.tooltip = tip
+			itemSelection_open(player,{"items","signals","fluids"},function(arr)
+				box.sprite = arr.group.."/"..arr.name
+				box.tooltip = arr.prototype.localised_name
 				--TODO: do something
 			end)
 		else
