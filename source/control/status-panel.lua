@@ -96,7 +96,7 @@ gui["status-panel"].click = function(nameArr,player,entity)
 	if fieldName == "signal" then
 		local box = player.gui.left.statusPanel.table["integratedCircuitry.signal"]
 		if box.sprite == "" then
-			itemSelection_open(player,{"items","signals","fluids"},function(arr)
+			itemSelection_open(player,{GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL},function(arr)
 				box.sprite = arr.group.."/"..arr.name
 				box.tooltip = arr.prototype.localised_name
 				--TODO: do something

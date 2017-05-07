@@ -8,7 +8,7 @@ local maxRecentEntries = 20
 
 -- call this to open the item selection gui
 -- @param player: Object of the player opening the gui
--- @param types: array of things to show {"items", "fluids", "signals"}
+-- @param types: array of things to show {GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL}
 -- @param callback: Passed function used as callback when action is taken
 --		accept a table with: {group=$,name=$,prototype=$}
 -- itemSelection_open(player, types, callback)
@@ -23,8 +23,16 @@ local maxRecentEntries = 20
 -- This helper file uses the following global data variables:
 -- global.itemSelection[$playerName]
 --				.recent= { {$group, $name}, {"item", "iron-plate"}, {"fluid", "water"}, ... }
---        .callback = function($itemName)
---				.showGroups = set of values. e.g: { "items"=true, "fluids"=true, "signals"=true }
+--        .callback = function({group=$,name=$,prototype=$})
+--				.showGroups = set of values. e.g: { "item"=true, "fluid"=true, "signal"=true }
+
+--------------------------------------------------
+-- Constants
+--------------------------------------------------
+GROUP_ITEM = "item"
+GROUP_FLUID = "fluid"
+GROUP_SIGNAL = "virtual-signal"
+GROUP_ALL = {GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL}
 
 ------------------------------------
 -- Helper methods
@@ -37,26 +45,31 @@ local function initGuiForPlayerName(playerName)
 	if is[playerName].recent == nil then is[playerName].recent = {} end
 end
 
-local function checkBoxForItem(group,name)
-	local prototype
-	if group == "item" then
-		prototype = game.item_prototypes[name]
-	elseif group == "fluid" then
-		prototype = game.fluid_prototypes[name]
+local function prototypesForGroup(group)
+	if group == GROUP_ITEM then
+		return game.item_prototypes
+	elseif group == GROUP_FLUID then
+		return game.fluid_prototypes
+	elseif group == GROUP_SIGNAL then
+		return game.virtual_signal_prototypes
 	end
+end
+
+local function checkBoxForItem(group,name)
+	local prototype = prototypesForGroup(group)[name]
 	local tip = prototype.localised_name
 	return {
 		type = "sprite-button",
-		name = "itemSelection.item."..name,
+		name = "itemSelection."..group.."."..name,
 		style = "slot_button_style",
 		tooltip = tip,
 		sprite = group.."/"..name
 	}
 end
 
-local function selectItem(playerData,player,itemName)
+local function selectItem(playerData,player,group,itemName)
 	-- add to recent items
-	table.insert(playerData.recent,1,{"item",itemName}) --TODO:insert correct group here
+	table.insert(playerData.recent,1,{group,itemName})
 	-- prevent duplicates
 	for i=#playerData.recent,2,-1 do
 		if playerData.recent[i][2] == itemName then table.remove(playerData.recent,i) end
@@ -67,7 +80,11 @@ local function selectItem(playerData,player,itemName)
 	end
 
 	if global.itemSelection[player.name].callback then
-		global.itemSelection[player.name].callback(itemName)
+		global.itemSelection[player.name].callback({
+			name=itemName,
+			group=group,
+			prototype=prototypesForGroup(group)[itemName]
+		})
 		global.itemSelection[player.name].callback = nil
 	end
 	itemSelection_close(player)
@@ -90,26 +107,21 @@ local function rebuildItemList(player)
 	local filter = frame.search["itemSelection.field"].text
 	local playerData = global.itemSelection[player.name]
 	local showGroups = playerData.showGroups
-	if showGroups["items"] then
-		for name,prototype in pairs(game.item_prototypes) do
-			if not prototype.has_flag("hidden") and (filter == "" or string.find(name,filter)) then
-				local checkbox = checkBoxForItem("item",name)
-				local status, err = pcall(function() items.add(checkbox) end)
-				if not status then
-					warn("Error occured with item: "..name..".")
-					warn(err)
+	
+	for _,group in pairs(GROUP_ALL) do
+		if showGroups[group] then
+			for name,prototype in pairs(prototypesForGroup(group)) do
+				local specialCondition = true
+				if group == GROUP_ITEM then
+					specialCondition = not prototype.has_flag("hidden")
 				end
-			end
-		end
-	end
-	if showGroups["fluids"] then
-		for name,prototype in pairs(game.fluid_prototypes) do
-			if (filter == "" or string.find(name,filter)) then
-				local checkbox = checkBoxForItem("fluid",name)
-				local status, err = pcall(function() items.add(checkbox) end)
-				if not status then
-					warn("Error occured with fluid: "..name..".")
-					warn(err)
+				if specialCondition and (filter == "" or string.find(name,filter)) then
+					local checkbox = checkBoxForItem(group,name)
+					local status, err = pcall(function() items.add(checkbox) end)
+					if not status then
+						warn("Error occured with item: "..name..".")
+						warn(err)
+					end
 				end
 			end
 		end
@@ -133,7 +145,7 @@ end
 itemSelection_open = function(player,types,callback)
 	initGuiForPlayerName(player.name)
 	local playerData = global.itemSelection[player.name]
-	playerData.showGroups = types
+	playerData.showGroups = table.set(types)
 
 	if player.gui.left.itemSelection ~= nil then
 		itemSelection_close(player)
@@ -189,9 +201,9 @@ itemSelection_gui_event = function(guiEvent,player)
 			rebuildItemList(player)
 		end
 		gui_scheduleEvent("itemSelection.updateFilter",player)
-	elseif fieldName == "item" then
+	elseif table.set(GROUP_ALL)[fieldName] then
 		local itemName = guiEvent[2]
-		selectItem(playerData,player,itemName)
+		selectItem(playerData,player,fieldName,itemName)
 	else
 		warn("Unknown fieldName for itemSelection_gui_event: "..tostring(fieldName))
 	end
