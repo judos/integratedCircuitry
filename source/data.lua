@@ -1,3 +1,4 @@
 require "libs.all"
 
-require "prototypes.indicator-lamp"
+require "prototypes.lamp-panel"
+require "prototypes.status-panel"

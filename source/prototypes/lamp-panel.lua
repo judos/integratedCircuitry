@@ -3,10 +3,10 @@ require "libs.prototypes.all"
 -- Item
 local indicator = deepcopy(data.raw["item"]["small-lamp"])
 overwriteContent(indicator, {
-	name = "indicator-lamp",
+	name = "lamp-panel",
 	order = "z[small-lamp]",
-	place_result = "indicator-lamp",
-	icon = "__base__/graphics/icons/small-lamp.png",
+	place_result = "lamp-panel",
+	icon = "__integratedCircuitry__/graphics/icons/lamp-panel.png",
 })
 data:extend({	indicator })
 
@@ -14,13 +14,13 @@ data:extend({	indicator })
 data:extend({
 	{
 		type = "recipe",
-		name = "indicator-lamp",
+		name = "lamp-panel",
 		enabled = false,
 		ingredients = {
 			{"small-lamp", 1},
 			{"steel-plate", 1},
 		},
-		result = "indicator-lamp"
+		result = "lamp-panel"
 	}
 })
 
@@ -28,12 +28,12 @@ data:extend({
 -- Entity
 local indicator = deepcopy(data.raw["lamp"]["small-lamp"])
 overwriteContent(indicator, {
-	name = "indicator-lamp",
+	name = "lamp-panel",
 	energy_usage_per_tick = "15KW",
 	light = {intensity = 0.2, size = 10, color = {r=1.0, g=1.0, b=1.0}},
 	picture_off =
 	{
-		filename = "__integratedCircuitry__/graphics/entity/indicator-off.png",
+		filename = "__integratedCircuitry__/graphics/entity/lamp-panel-off.png",
 		priority = "high",
 		width = 32,
 		height = 32,
@@ -44,7 +44,7 @@ overwriteContent(indicator, {
 	},
 	picture_on =
 	{
-		filename = "__integratedCircuitry__/graphics/entity/indicator-on-patch.png",
+		filename = "__integratedCircuitry__/graphics/entity/lamp-panel-on-patch.png",
 		priority = "high",
 		width = 32,
 		height = 32,
@@ -69,8 +69,8 @@ overwriteContent(indicator, {
 })
 indicator.circuit_connector_sprites = nil
 
-indicator.minable.result = "indicator-lamp"
+indicator.minable.result = "lamp-panel"
 data:extend({	indicator })
 
 
-addTechnologyUnlocksRecipe("optics","indicator-lamp")
+addTechnologyUnlocksRecipe("optics","lamp-panel")

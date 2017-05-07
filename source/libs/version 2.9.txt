@@ -1,3 +1,5 @@
+2.9 integratedCircuitry: 	add emptyImage function to prototypes
+
 2.8 beltSorter: correct wrong imports in control.entity system
 	add default init for logging
 

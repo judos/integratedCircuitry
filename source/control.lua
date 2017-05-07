@@ -1,9 +1,10 @@
-
 require "libs.all"
 require "libs.prototypes.all"
 require "libs.control.functions"
 
 require "constants"
+
+require "control.status-panel"
 
 
 -- global data used:
