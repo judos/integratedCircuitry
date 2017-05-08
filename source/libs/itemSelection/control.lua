@@ -8,16 +8,16 @@ local maxRecentEntries = 20
 
 -- call this to open the item selection gui
 -- @param player: Object of the player opening the gui
--- @param types: array of things to show {GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL}
+-- @param types: array of things to show {TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL}
 -- @param callback: Passed function used as callback when action is taken
---		accept a table with: {group=$,name=$,prototype=$}
+--		accept a table with: {type=$,name=$,prototype=$}
 -- itemSelection_open(player, types, callback)
 
 -- Call this to migrate when updating the library to 2.9
 -- itemSelection_migration_2_9()
 
--- Resolve a group name into the factorio prototypes array
--- itemSelection_prototypesForGroup(group)
+-- Resolve a type name into the factorio prototypes array
+-- itemSelection_prototypesForGroup(type)
 
 --------------------------------------------------
 -- Global data
@@ -25,18 +25,18 @@ local maxRecentEntries = 20
 
 -- This helper file uses the following global data variables:
 -- global.itemSelection[$playerName]
---				.recent= { {$group, $name}, {"item", "iron-plate"}, {"fluid", "water"}, ... }
---        .callback = function({group=$,name=$,prototype=$})
---				.showGroups = set of values. e.g: { "item"=true, "fluid"=true, "signal"=true }
+--				.recent= { {$type, $name}, {"item", "iron-plate"}, {"fluid", "water"}, ... }
+--        .callback = function({type=$,name=$,prototype=$})
+--				.showGroups = set of type values. e.g: { "item"=true, "fluid"=true, "signal"=true }
 
 --------------------------------------------------
 -- Constants
 --------------------------------------------------
-GROUP_ITEM = "item"
-GROUP_FLUID = "fluid"
-GROUP_SIGNAL = "virtual-signal"
-GROUP_SPECIAL1 = "special1"
-GROUP_ALL = {GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL}
+TYPE_ITEM = "item"
+TYPE_FLUID = "fluid"
+TYPE_SIGNAL = "virtual-signal"
+TYPE_SPECIAL1 = "special1"
+TYPE_ALL = {TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL}
 
 ------------------------------------
 -- Helper methods
@@ -49,21 +49,21 @@ local function initGuiForPlayerName(playerName)
 	if is[playerName].recent == nil then is[playerName].recent = {} end
 end
 
-local function checkBoxForItem(group,name)
-	local prototype = itemSelection_prototypesForGroup(group)[name]
+local function checkBoxForItem(type,name)
+	local prototype = itemSelection_prototypesForGroup(type)[name]
 	local tip = prototype.localised_name
 	return {
 		type = "sprite-button",
-		name = "itemSelection."..group.."."..name,
+		name = "itemSelection."..type.."."..name,
 		style = "slot_button_style",
 		tooltip = tip,
-		sprite = group.."/"..name
+		sprite = type.."/"..name
 	}
 end
 
-local function selectItem(playerData,player,group,itemName)
+local function selectItem(playerData,player,type,itemName)
 	-- add to recent items
-	table.insert(playerData.recent,1,{group,itemName})
+	table.insert(playerData.recent,1,{type,itemName})
 	-- prevent duplicates
 	for i=#playerData.recent,2,-1 do
 		if playerData.recent[i][2] == itemName then table.remove(playerData.recent,i) end
@@ -76,8 +76,8 @@ local function selectItem(playerData,player,group,itemName)
 	if global.itemSelection[player.name].callback then
 		global.itemSelection[player.name].callback({
 			name=itemName,
-			group=group,
-			prototype=itemSelection_prototypesForGroup(group)[itemName]
+			type=type,
+			prototype=itemSelection_prototypesForGroup(type)[itemName]
 		})
 		global.itemSelection[player.name].callback = nil
 	end
@@ -102,15 +102,15 @@ local function rebuildItemList(player)
 	local playerData = global.itemSelection[player.name]
 	local showGroups = playerData.showGroups
 	
-	for _,group in pairs(GROUP_ALL) do
-		if showGroups[group] then
-			for name,prototype in pairs(itemSelection_prototypesForGroup(group)) do
+	for _,type in pairs(TYPE_ALL) do
+		if showGroups[type] then
+			for name,prototype in pairs(itemSelection_prototypesForGroup(type)) do
 				local specialCondition = true
-				if group == GROUP_ITEM then
+				if type == TYPE_ITEM then
 					specialCondition = not prototype.has_flag("hidden")
 				end
 				if specialCondition and (filter == "" or string.find(name,filter)) then
-					local checkbox = checkBoxForItem(group,name)
+					local checkbox = checkBoxForItem(type,name)
 					local status, err = pcall(function() items.add(checkbox) end)
 					if not status then
 						warn("Error occured with item: "..name..".")
@@ -162,7 +162,7 @@ itemSelection_open = function(player,types,callback)
 		end
 	end
 
-	if playerData.showGroups[GROUP_SPECIAL1] then
+	if playerData.showGroups[TYPE_SPECIAL1] then
 		frame.add{type="table",name="special",colspan=2}
 		frame.special.add{type="label",name="title",caption={"",{"special"},":"}}
 		frame.special.add{type="table",name="itemsX",colspan=1}
@@ -199,7 +199,7 @@ itemSelection_gui_event = function(guiEvent,player)
 		if player.gui.left.itemSelection.valid then
 			gui_scheduleEvent("itemSelection.updateFilter",player)
 		end
-	elseif table.set(GROUP_ALL)[fieldName] then -- if any slot was clicked of any group
+	elseif table.set(TYPE_ALL)[fieldName] then -- if any slot was clicked of any type
 		local itemName = guiEvent[2]
 		selectItem(playerData,player,fieldName,itemName)
 	else
@@ -207,12 +207,12 @@ itemSelection_gui_event = function(guiEvent,player)
 	end
 end
 
-itemSelection_prototypesForGroup = function(group)
-	if group == GROUP_ITEM then
+itemSelection_prototypesForGroup = function(type)
+	if type == TYPE_ITEM then
 		return game.item_prototypes
-	elseif group == GROUP_FLUID then
+	elseif type == TYPE_FLUID then
 		return game.fluid_prototypes
-	elseif group == GROUP_SIGNAL then
+	elseif type == TYPE_SIGNAL then
 		return game.virtual_signal_prototypes
 	end
 end

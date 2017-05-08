@@ -16,7 +16,7 @@ local m = {} --used for methods of the statusPanel
 --   sprite = luaEntity(car object showing the sprite)
 --   min = integer(min value to show red)
 --   max = integer(max value to show green)
---   signal = table( group = string(item,fluid,virtual_signal), name = string)
+--   signal = table( type = string(item,fluid,virtual_signal), name = string)
 -- }
 
 --------------------------------------------------
@@ -63,7 +63,6 @@ statusPanel.copy = function(source,srcData,target,targetData)
 	end
 	info("Copy entity: "..x(srcData).." target: "..x(targetData))
 	
-	
 end
 
 ---------------------------------------------------
@@ -84,10 +83,10 @@ gui["status-panel"].open = function(player,entity)
 	frame.table.add{type="sprite-button",name="integratedCircuitry.signal",style="slot_button_style",sprite=""}
 	
 	frame.table.add{type="label",name="min",caption={"",{"red_value"},":"}}
-	frame.table.add{type="textfield",name="red_value"}
+	frame.table.add{type="textfield",name="integratedCircuitry.min"}
 	
 	frame.table.add{type="label",name="max",caption={"",{"green_value"},":"}}
-	frame.table.add{type="textfield",name="green_value"}
+	frame.table.add{type="textfield",name="integratedCircuitry.max"}
 	
 	m.updateGui(player,entity)
 end
@@ -100,21 +99,25 @@ gui["status-panel"].close = function(player)
 end
 
 gui["status-panel"].click = function(nameArr,player,entity)
-	info("clicked: "..x(nameArr))
 	local fieldName = table.remove(nameArr,1)
 	if fieldName == "signal" then
 		local box = player.gui.left.statusPanel.table["integratedCircuitry.signal"]
 		if box.sprite == "" then
-			itemSelection_open(player,{GROUP_ITEM, GROUP_FLUID, GROUP_SIGNAL},function(arr)
-				box.sprite = arr.group.."/"..arr.name
-				box.tooltip = arr.prototype.localised_name
+			itemSelection_open(player,{TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL},function(arr)
 				m.setSignal(player,entity,arr)
 			end)
 		else
-			box.sprite = ""
-			box.tooltip = ""
-			--TODO: do something
+			m.setSignal(player,entity,nil)
 		end
+	elseif table.set({"min","max"})[fieldName] then
+		local data = global.entityData[idOfEntity(entity)]
+		local tab = player.gui.left.statusPanel.table
+		local text = tab["integratedCircuitry."..fieldName].text
+		if text~="" and text~="-" then 
+			text = tonumber(text) or ""
+			tab["integratedCircuitry."..fieldName].text = text -- correct alpha numeric input
+		end
+		data[fieldName] = tonumber(text)
 	end
 end
 
@@ -122,19 +125,20 @@ m.setSignal = function(player,entity,arr)
 	local data = global.entityData[idOfEntity(entity)]
 	if not arr then
 		data.signal = nil
+		m.updateGui(player,entity)
 		return
 	end
 	data.signal = {
 		name = arr.name,
-		group = arr.group
+		type = arr.type
 	}
 	data.min = 0
-	if group == GROUP_ITEM then
+	if type == TYPE_ITEM then
 		data.max = arr.prototype.stack_size
 		info(arr.prototype.subgroup.name)
-	elseif group == GROUP_FLUID then
+	elseif type == TYPE_FLUID then
 		data.max = 25000
-	elseif group == GROUP_SIGNAL then
+	elseif type == TYPE_SIGNAL then
 		data.max = 100
 	end
 	m.updateGui(player,entity)
@@ -144,12 +148,12 @@ m.updateGui = function(player,entity)
 	local data = global.entityData[idOfEntity(entity)]
 	
 	local tab = player.gui.left.statusPanel.table
-	tab.red_value.text = data.min
-	tab.green_value.text = data.max
+	tab["integratedCircuitry.min"].text = data.min or ""
+	tab["integratedCircuitry.max"].text = data.max or ""
 	local signal = tab["integratedCircuitry.signal"]
 	if data.signal then
-		signal.sprite = data.signal.group.."/"..data.signal.name
-		local prototypes = itemSelection_prototypesForGroup(data.signal.group)
+		signal.sprite = data.signal.type.."/"..data.signal.name
+		local prototypes = itemSelection_prototypesForGroup(data.signal.type)
 		signal.tooltip = prototypes[data.signal.name].localised_name
 	else
 		signal.sprite = ""
@@ -167,7 +171,31 @@ statusPanel.tick = function(statusPanel,data)
 		return 0,nil
 	end
 	
-	return 60,nil
+	if not data.signal or statusPanel.energy == 0 then
+		data.sprite.orientation = 0
+		return 60,nil
+	end
+	
+	local signalGreen = statusPanel.get_circuit_network(defines.wire_type.green,1)
+	local signalRed = statusPanel.get_circuit_network(defines.wire_type.red,1)
+	local amount = 0
+	if signalGreen ~= nil then
+		amount = amount + signalGreen.get_signal(data.signal)
+	end
+	if signalRed ~= nil then
+		amount = amount + signalRed.get_signal(data.signal)
+	end
+	
+	local min = tonumber(data.min) or 0
+	local max = tonumber(data.max) or 0
+	
+	local per = (amount - min) / (max - min)
+	if per < 0 or tostring(per) == "nan" then per = 0 end
+	if per > 1 then per = 1 end
+	local rotations = 11 -- orientation 0 = empty picture
+	data.sprite.orientation = 1/12 + per* 10/12
+	print(per.."  or:" ..data.sprite.orientation)
+	return 30,nil
 end
 
 
