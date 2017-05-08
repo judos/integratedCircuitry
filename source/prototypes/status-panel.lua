@@ -73,7 +73,7 @@ overwriteContent(statusPanelCar, {
 	name = "status-panel-sprite",
 	type = "car",
 	
-	icon = "__nixie-tubes__/graphics/nixie-alpha-base-icon.png",
+	icon = "__base__/graphics/icons/car.png",
 	flags = {"placeable-neutral", "placeable-off-grid", "player-creation"},    
 	minable = {mining_time = 0.5, result = "status-panel-sprite"},
 	max_health = 200,
