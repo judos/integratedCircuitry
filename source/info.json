@@ -1,6 +1,6 @@
 {
 	"name": "integratedCircuitry",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"title": "Integrated Circuitry",
 	"author": "judos",
 	"description": "Add several combinators used to achieve much more complex circuit logic",
