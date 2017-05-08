@@ -131,6 +131,12 @@ script.on_event(defines.events.on_gui_click, function(event)
 	return handleEvent(uiComponentIdentifier,player)
 end)
 
+script.on_event(defines.events.on_gui_text_changed, function(event)
+	local player = game.players[event.player_index]
+	local uiComponentIdentifier = event.element.name
+	return handleEvent(uiComponentIdentifier,player)
+end)
+
 --------------------------------------------------
 -- Helper functions
 --------------------------------------------------
