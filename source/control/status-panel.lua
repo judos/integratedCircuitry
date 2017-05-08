@@ -62,7 +62,9 @@ statusPanel.copy = function(source,srcData,target,targetData)
 		return
 	end
 	info("Copy entity: "..x(srcData).." target: "..x(targetData))
-	
+	targetData.min = srcData.min
+	targetData.max = srcData.max
+	targetData.signal = deepcopy(srcData.signal)
 end
 
 ---------------------------------------------------
@@ -133,12 +135,16 @@ m.setSignal = function(player,entity,arr)
 		type = arr.type
 	}
 	data.min = 0
-	if type == TYPE_ITEM then
+	if arr.type == TYPE_ITEM then
 		data.max = arr.prototype.stack_size
-		info(arr.prototype.subgroup.name)
-	elseif type == TYPE_FLUID then
+		if arr.prototype.subgroup.name == "raw-material" then
+			data.max = arr.prototype.stack_size * 5
+		elseif arr.prototype.subgroup.name == "module" then
+			data.max = arr.prototype.stack_size * 0.2
+		end
+	elseif arr.type == TYPE_FLUID then
 		data.max = 25000
-	elseif type == TYPE_SIGNAL then
+	elseif arr.type == TYPE_SIGNAL then
 		data.max = 100
 	end
 	m.updateGui(player,entity)
@@ -194,7 +200,6 @@ statusPanel.tick = function(statusPanel,data)
 	if per > 1 then per = 1 end
 	local rotations = 11 -- orientation 0 = empty picture
 	data.sprite.orientation = 1/12 + per* 10/12
-	print(per.."  or:" ..data.sprite.orientation)
 	return 30,nil
 end
 
