@@ -17,7 +17,7 @@ data:extend({
 		name = "status-panel",
 		enabled = false,
 		ingredients = {
-			{"status-panel", 3},
+			{"lamp-panel", 3},
 			{"electronic-circuit", 3},
 		},
 		result = "status-panel"
