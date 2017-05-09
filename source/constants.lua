@@ -5,6 +5,6 @@ fullModName = "integratedCircuitry" -- required for logging and prototypes
 
 
 libLog.debug_master = true
-libLog.testing = true
+--libLog.testing = true
 --libLog.testing = false -- enables player printing of every log, sets log level to info
 --libLog.debug_level = 1  -- 1=info 2=warn 3=error
