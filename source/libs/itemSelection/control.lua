@@ -51,6 +51,7 @@ end
 
 local function checkBoxForItem(type,name)
 	local prototype = itemSelection_prototypesForGroup(type)[name]
+	if prototype == nil then return nil end
 	local tip = prototype.localised_name
 	return {
 		type = "sprite-button",
@@ -59,6 +60,17 @@ local function checkBoxForItem(type,name)
 		tooltip = tip,
 		sprite = type.."/"..name
 	}
+end
+
+local function addCheckboxToTable(itemType,itemName,itemsTable)
+	local checkbox = checkBoxForItem(itemType,itemName)
+	if checkbox ~= nil then
+		local status, err = pcall(function() itemsTable.add(checkbox) end)
+		if not status then
+			warn("Error occured with item: "..itemType.."/"..itemName)
+			warn(err)
+		end
+	end
 end
 
 local function selectItem(playerData,player,type,itemName)
@@ -110,12 +122,7 @@ local function rebuildItemList(player)
 					specialCondition = not prototype.has_flag("hidden")
 				end
 				if specialCondition and (filter == "" or string.find(name,filter)) then
-					local checkbox = checkBoxForItem(type,name)
-					local status, err = pcall(function() items.add(checkbox) end)
-					if not status then
-						warn("Error occured with item: "..name..".")
-						warn(err)
-					end
+					addCheckboxToTable(type,name,items)
 				end
 			end
 		end
@@ -158,7 +165,7 @@ itemSelection_open = function(player,types,callback)
 				playerData.recent = {}
 				break
 			end
-			items.add(checkBoxForItem(recentTable[1],recentTable[2]))
+			addCheckboxToTable(recentTable[1],recentTable[2],items)
 		end
 	end
 
@@ -166,7 +173,7 @@ itemSelection_open = function(player,types,callback)
 		frame.add{type="table",name="special",colspan=2}
 		frame.special.add{type="label",name="title",caption={"",{"special"},":"}}
 		frame.special.add{type="table",name="itemsX",colspan=1}
-		frame.special.itemsX.add(checkBoxForItem("item","belt-sorter-everythingelse"))
+		addCheckboxToTable("item","belt-sorter-everythingelse",frame.special.itemsX)
 	end
 	
 	frame.add{type="table",name="search",colspan=2}

@@ -2,6 +2,7 @@
 	prototypes: add emptyImage function to 
 	itemSelection: remove unused styles for old factorio
 	itemSelection: add showGroups and support for fluids, signals
+	itemSelection: fix error with items after uninstalling a mod
 	MIGRATION itemSelection:
 		-General: call itemSelection_migration_2_9() in control migration!
 		-calls to itemSelection_open: Parameters and callback return arguments have changed!!
