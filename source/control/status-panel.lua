@@ -184,12 +184,17 @@ statusPanel.tick = function(statusPanel,data)
 	
 	local signalGreen = statusPanel.get_circuit_network(defines.wire_type.green,1)
 	local signalRed = statusPanel.get_circuit_network(defines.wire_type.red,1)
+	local signal = deepcopy(data.signal)
+	if signal.type == "virtual-signal" then
+		signal.type = "virtual"
+	end
+	
 	local amount = 0
 	if signalGreen ~= nil then
-		amount = amount + signalGreen.get_signal(data.signal)
+		amount = amount + signalGreen.get_signal(signal)
 	end
 	if signalRed ~= nil then
-		amount = amount + signalRed.get_signal(data.signal)
+		amount = amount + signalRed.get_signal(signal)
 	end
 	
 	local min = tonumber(data.min) or 0
