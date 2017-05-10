@@ -8,7 +8,7 @@ local maxRecentEntries = 20
 
 -- call this to open the item selection gui
 -- @param player: Object of the player opening the gui
--- @param types: array of things to show {TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL}
+-- @param types: array of things to show {TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL, TYPE_HIDE_ALL_EACH_ANY}
 -- @param callback: Passed function used as callback when action is taken
 --		accept a table with: {type=$,name=$,prototype=$}
 -- itemSelection_open(player, types, callback)
@@ -36,6 +36,7 @@ TYPE_ITEM = "item"
 TYPE_FLUID = "fluid"
 TYPE_SIGNAL = "virtual-signal"
 TYPE_SPECIAL1 = "special1"
+TYPE_HIDE_ALL_EACH_ANY = "hide_all_each_any"
 TYPE_ALL = {TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL}
 
 ------------------------------------
@@ -53,6 +54,7 @@ local function checkBoxForItem(type,name)
 	local prototype = itemSelection_prototypesForGroup(type)[name]
 	if prototype == nil then return nil end
 	local tip = prototype.localised_name
+	--local tip = type.."/"..name
 	return {
 		type = "sprite-button",
 		name = "itemSelection."..type.."."..name,
@@ -120,6 +122,11 @@ local function rebuildItemList(player)
 				local specialCondition = true
 				if type == TYPE_ITEM then
 					specialCondition = not prototype.has_flag("hidden")
+				end
+				if type == TYPE_SIGNAL and showGroups[TYPE_HIDE_ALL_EACH_ANY] then
+					if name == "signal-everything" or name == "signal-anything" or name == "signal-each" then
+						specialCondition = false
+					end
 				end
 				if specialCondition and (filter == "" or string.find(name,filter)) then
 					addCheckboxToTable(type,name,items)

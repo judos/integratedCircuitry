@@ -105,7 +105,7 @@ gui["status-panel"].click = function(nameArr,player,entity)
 	if fieldName == "signal" then
 		local box = player.gui.left.statusPanel.table["integratedCircuitry.signal"]
 		if box.sprite == "" then
-			itemSelection_open(player,{TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL},function(arr)
+			itemSelection_open(player,{TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL, TYPE_HIDE_ALL_EACH_ANY},function(arr)
 				m.setSignal(player,entity,arr)
 			end)
 		else
