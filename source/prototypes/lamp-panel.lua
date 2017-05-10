@@ -30,7 +30,8 @@ local indicator = deepcopy(data.raw["lamp"]["small-lamp"])
 overwriteContent(indicator, {
 	name = "lamp-panel",
 	energy_usage_per_tick = "15KW",
-	light = {intensity = 0.2, size = 10, color = {r=1.0, g=1.0, b=1.0}},
+	light = {intensity = 0.2, size = 5, color = {r=0.5, g=0.5, b=0.5}},
+	light_when_colored = {intensity = 0.2, size = 3, color = {r=0.5, g=0.5, b=0.5}},
 	picture_off =
 	{
 		filename = "__integratedCircuitry__/graphics/entity/lamp-panel-off.png",
@@ -68,6 +69,12 @@ overwriteContent(indicator, {
     },
 })
 indicator.circuit_connector_sprites = nil
+table.insert(indicator.signal_to_color_mapping,
+	{type="virtual", name="signal-black", color={r=0.1,g=0.1,b=0.1}}
+)
+table.insert(indicator.signal_to_color_mapping,
+	{type="virtual", name="signal-grey", color={r=0.5,g=0.5,b=0.5}}
+)
 
 indicator.minable.result = "lamp-panel"
 data:extend({	indicator })
