@@ -3,6 +3,7 @@
 	itemSelection: remove unused styles for old factorio
 	itemSelection: add showGroups and support for fluids, signals
 	itemSelection: fix error with items after uninstalling a mod
+	itemSelection: fix wrong import on gui.lua when events occur that could call itemSelection
 	MIGRATION itemSelection:
 		-General: call itemSelection_migration_2_9() in control migration!
 		-calls to itemSelection_open: Parameters and callback return arguments have changed!!

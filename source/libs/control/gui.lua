@@ -1,3 +1,5 @@
+require "libs.itemSelection.control"
+
 -- Constants:
 local guiUpdateEveryTicks = 15
 
