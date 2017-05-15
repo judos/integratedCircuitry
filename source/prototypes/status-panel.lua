@@ -6,7 +6,7 @@ overwriteContent(statusPanel, {
 	name = "status-panel",
 	order = "z[statusPanel]",
 	place_result = "status-panel",
-	icon = "__base__/graphics/icons/small-lamp.png",
+	icon = "__integratedCircuitry__/graphics/icons/status-panel.png",
 })
 data:extend({	statusPanel })
 
@@ -33,6 +33,7 @@ overwriteContent(statusPanel, {
 	collision_box = {{-0.45, -1.45}, {0.45, 1.45}},
   selection_box = {{-0.5, -1.5}, {0.5, 1.5}},
 	light = {intensity = 0.1, size = 5, color = {r=1.0, g=1.0, b=1.0}},
+	icon = "__integratedCircuitry__/graphics/icons/status-panel.png",
 	picture_off = {
 		filename = "__integratedCircuitry__/graphics/entity/status-panel-base.png",
 		priority = "low",
