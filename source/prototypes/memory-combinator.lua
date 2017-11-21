@@ -16,6 +16,7 @@ data:extend({
 		type = "recipe",
 		name = "memory-combinator",
 		enabled = false,
+		hidden = true,
 		ingredients = {
 			{"constant-combinator", 4},
 			{"electronic-circuit", 20},
