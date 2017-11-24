@@ -5,7 +5,8 @@ local circuitPole = deepcopy(data.raw["item"]["small-electric-pole"])
 overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
-	order = "a[energy]-d[circuit-pole]",
+	subgroup = "circuit-network",
+	order = "b[wires]-c[circuit-pole]",
   place_result = "circuit-pole"
 })
 data:extend({	circuitPole })
@@ -31,7 +32,6 @@ data:extend({
 local circuitPole = deepcopy(data.raw["electric-pole"]["small-electric-pole"])
 overwriteContent(circuitPole, {
 	name = "circuit-pole",
-	order = "z[small-lamp]0",
 	place_result = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
 	minable = {hardness = 0.2, mining_time = 0.5, result = "circuit-pole"},
