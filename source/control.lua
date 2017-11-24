@@ -5,6 +5,7 @@ require "libs.control.functions"
 require "constants"
 
 require "control.status-panel"
+require "control.filter-combinator"
 
 
 -- global data used:
