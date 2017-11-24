@@ -13,13 +13,15 @@ function circuitPole_build(entity)
 	end
 	
 	-- diconnect all circuit poles
+	local disconnected = 0 
 	for k,e in pairs(entity.neighbours.copper) do
 		if e.name == "circuit-pole" then
 			entity.disconnect_neighbour(e)
+			disconnected = disconnected + 1
 		end
 	end
 	-- make some connnections if all have been removed
-	if # entity.neighbours.copper > 0 then
+	if #entity.neighbours.copper > 0 or disconnected==0 then
 		return
 	end
 	
