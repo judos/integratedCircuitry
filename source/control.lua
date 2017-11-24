@@ -6,6 +6,7 @@ require "constants"
 
 require "control.status-panel"
 require "control.filter-combinator"
+require "control.circuit-pole"
 
 
 -- global data used:
