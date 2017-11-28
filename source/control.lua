@@ -22,21 +22,28 @@ script.on_init(function()
 	
 	entities_init()
 	gui_init()
-	
 end)
 
 script.on_load(function()
-	info(global)
 end)
 
 script.on_configuration_changed(function()
-	local bs = global.integratedCircuitry
-	local previousVersion = bs.version
-	if bs.version ~= previousVersion then
-		info("Previous version: "..previousVersion.." migrated to "..bs.version)
+	gui_init()
+	entities_init()
+	local ic = global.integratedCircuitry
+	local previousVersion = ic.version
+	if ic.version < "0.1.1" then
+		migrate_0_1_1()
+		ic.version = "0.1.1"
+	end
+	if ic.version ~= previousVersion then
+		info("Previous version: "..previousVersion.." migrated to "..ic.version)
 	end
 end)
 
+function migrate_0_1_1()
+	migrate_0_1_1_statusPanel()
+end
 
 ---------------------------------------------------
 -- Tick

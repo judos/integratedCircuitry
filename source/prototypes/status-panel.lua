@@ -67,66 +67,31 @@ data:extend({	statusPanel })
 
 addTechnologyUnlocksRecipe("optics","status-panel")
 
--- Car entity to show content of status panel:
-local statusPanelCar = {}
--- = deepcopy(data.raw["car"]["car"]) -- <-- that didn't work because the machine gun is always shown??
-overwriteContent(statusPanelCar, {
-	name = "status-panel-sprite",
-	type = "car",
-	
-	icon = "__base__/graphics/icons/car.png",
-	flags = {"placeable-neutral", "placeable-off-grid", "player-creation"},    
-	minable = {mining_time = 0.5, result = "status-panel-sprite"},
-	max_health = 200,
-	order="z[zebra]",
-	corpse = "small-remnants",
-	energy_per_hit_point = 1,
-	crash_trigger = crash_trigger(),
-	resistances = { },
+-- Sprite to show status panel:
+local statusPanelSprite = {
+	type = "simple-entity-with-owner",
+	name = "ic-status-panel-sprite",
+	render_layer = "higher-object-above",
+	icon = "__integratedCircuitry__/graphics/entity/status-panel-patch.png",
+	flags = {"placeable-neutral", "placeable-off-grid", "player-creation"},
+	order = "s-e-w-o",
+	max_health = 100,
+	--corpse = "small-remnants",
 	collision_box = {{-0.1, -.1}, {.1,.1}},
-	collision_mask = { "item-layer", "object-layer", "player-layer", "water-tile"},
 	selection_box = {{0,0}, {0,0}},
-	effectivity = 0.5,
-	braking_power = "200kW",
-	burner = {
-		effectivity = 0.6,
-		fuel_inventory_size = 1,
-		smoke = {}
-	},
-	consumption = "150kW",
-	friction = 2e-3,
-	sound_minimum_speed = 1;
-	rotation_speed = 0.015,
-	weight = 700,
-	guns = { },
-	inventory_size = 0,
-	animation = {
-		layers = {
-			{
-				width = 32,
-				height = 96,
-				frame_count = 1,
-				direction_count = 11,
-				apply_runtime_tint = false,
-				max_advance = 0.2,
-				shift = {0,-1},
-				stripes = {
-					{
-					 filename = "__integratedCircuitry__/graphics/entity/status-panel-patch.png",
-					 width_in_frames = 11,
-					 height_in_frames = 1,
-					},
-				}
-			}
-		}
+	pictures = {
+		sheet = {
+			filename = "__integratedCircuitry__/graphics/entity/status-panel-patch.png",
+			line_length = 11,
+			width = 32,
+			height = 96,
+			variation_count = 11,
+			apply_runtime_tint = false,
+			axially_symmetrical = false,
+			direction_count = 1,
+			shift = {0,-1},
+		},
 	}
-})
-data:extend({	statusPanelCar })
+}
 
--- TEMPORARY FOR TESTING
-local statusPanelCarItem = deepcopy(data.raw["item-with-entity-data"]["car"])
-overwriteContent(statusPanelCarItem, {
-	name = "status-panel-sprite",
-  place_result = "status-panel-sprite",
-})
-data:extend({	statusPanelCarItem })
+data:extend({	statusPanelSprite })

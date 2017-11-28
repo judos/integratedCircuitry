@@ -20,9 +20,29 @@ local m = {} --used for methods of the statusPanel
 -- }
 
 --------------------------------------------------
--- Global data
+-- Migration
 --------------------------------------------------
 
+function migrate_0_1_1_statusPanel()
+	for id,data in pairs(global.entityData) do
+		if data.name == "status-panel" then
+			if not data.sprite.valid then
+				local location = positionOfId(id)
+				local surface = surfaceWithIndex(location.surfaceIndex)
+				local position = location.position
+				data.sprite = surface.create_entity{
+					name="ic-status-panel-sprite", 
+					-- y-offset is required for correct order of sprite display
+					-- the offset is undone by using shift value in the sprite
+					position= {x=position.x , y=position.y+1}, 
+					force=nil
+				}
+			end
+		else
+			info("Unknown entity: "..data.name)
+		end
+	end
+end
 
 ---------------------------------------------------
 -- build and remove
@@ -33,7 +53,7 @@ statusPanel.build = function(entity)
 	
 	local position = entity.position
 	local sprite = entity.surface.create_entity{
-		name="status-panel-sprite", 
+		name="ic-status-panel-sprite", 
 		-- y-offset is required for correct order of sprite display
 		-- the offset is undone by using shift value in the sprite
 		position= {x=position.x , y=position.y+1}, 
@@ -172,9 +192,8 @@ statusPanel.tick = function(statusPanel,data)
 		err("Error occured with status-panel: "..idOfEntity(statusPanel))
 		return 0,nil
 	end
-	
 	if not data.signal or statusPanel.energy == 0 then
-		data.sprite.orientation = 0
+		data.sprite.graphics_variation = 1
 		return 60,nil
 	end
 	
@@ -199,8 +218,9 @@ statusPanel.tick = function(statusPanel,data)
 	local per = (amount - min) / (max - min)
 	if per < 0 or tostring(per) == "nan" then per = 0 end
 	if per > 1 then per = 1 end
-	local rotations = 11 -- orientation 0 = empty picture
-	data.sprite.orientation = 1/12 + per* 10/12
+	local rotations = 10 -- orientation 1 = empty picture
+	--info(per)
+	data.sprite.graphics_variation = 1 + 1+math.min(rotations-1,math.floor(per * rotations))
 	return 30,nil
 end
 

@@ -1,5 +1,7 @@
 3.3 integratedCircuitry
-	added prototypesForGroup
+	added: prototypesForGroup in control.functions
+	removed: idOfEntity_v21, entityOfId_v21
+	added: positionOfId in control.entityId
 
 3.2 hardCrafting
 	fix logging error when game is nil
