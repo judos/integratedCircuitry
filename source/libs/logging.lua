@@ -9,7 +9,7 @@ if libLog.testing then
 	-- 1=info 2=warning 3=error
 	libLog.debug_master = true
 	libLog.debug_level = libLog.debug_level or 1
-	libLog.always_player_print = true
+	libLog.always_player_print = (libLog.always_player_print == nil) and true or libLog.always_player_print
 	libLog.stack_trace = (libLog.stack_trace == nil) and true or libLog.stack_trace;
 end
 
@@ -48,8 +48,8 @@ function libLog.debug(message,level)
 		message = message
 	}
 	--local str = .." [ "..level.." "..fullModName.." ] "..libLog.caller()..": "..message
-	if level == "ERROR" or libLog.always_player_print then
-		libLog.PlayerPrint(formatWith("[%name - %caller]: %message",data))
+	if game and (level == "ERROR" or libLog.always_player_print) then
+		game.print(formatWith("[%name - %caller]: %message",data))
 	end
 	local str = formatWith("%time [ %level %name - %caller]: %message",data)
 	if libLog.stack_trace then
@@ -65,7 +65,7 @@ function libLog.caller()
 	local file,appendix
 	repeat
 		local l = table.remove(lines,1)
-		file,appendix = l:match("([%w_]+)(.lua:%d+)")
+		file,appendix = l:match("([^/]+)(.lua:%d+)")
 	until file ~= "logging"
 	if not file then return s end
 	return tostring(file)..tostring(appendix)
@@ -97,11 +97,3 @@ function libLog.gameTime()
 	return h..":"..m..":"..s
 end
 
-function libLog.PlayerPrint(message)
-	if not game then
-		return
-	end
-	for _,player in pairs(game.players) do
-		player.print(message)
-	end
-end
