@@ -56,8 +56,9 @@ end
 -- gui actions
 ---------------------------------------------------
 
-gui["status-panel"]={}
-gui["status-panel"].open = function(player,entity)
+gui["filter-combinator"]={}
+gui["filter-combinator"].open = function(player,entity)
+	--[[
 	if player.gui.left.filterCombinator then
 		player.gui.left.filterCombinator.destroy()
 	end
@@ -76,16 +77,19 @@ gui["status-panel"].open = function(player,entity)
 	frame.table.add{type="textfield",name="integratedCircuitry.max"}
 	
 	m.updateGui(player,entity)
+	]]--
 end
 
-gui["status-panel"].close = function(player)
+gui["filter-combinator"].close = function(player)
+	--[[
 	if player.gui.left.filterCombinator then
 		player.gui.left.filterCombinator.destroy()
 	end
 	itemSelection_close(player)
+	]]--
 end
 
-gui["status-panel"].click = function(nameArr,player,entity)
+gui["filter-combinator"].click = function(nameArr,player,entity)
 	local fieldName = table.remove(nameArr,1)
 	if fieldName == "signal" then
 		
