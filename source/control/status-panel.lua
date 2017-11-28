@@ -1,4 +1,4 @@
-require "libs.itemSelection.control"
+require "libs.control.functions"
 
 -- Registering entity into system
 local statusPanel = {}
@@ -82,7 +82,7 @@ gui["status-panel"].open = function(player,entity)
 	frame.add{type="table",name="table",colspan=2}
 
 	frame.table.add{type="label",name="title",caption={"",{"signal"},":"}}
-	frame.table.add{type="sprite-button",name="integratedCircuitry.signal",style="slot_button_style",sprite=""}
+	frame.table.add{type="choose-elem-button",name="integratedCircuitry.signal",elem_type="item"}
 	
 	frame.table.add{type="label",name="min",caption={"",{"red_value"},":"}}
 	frame.table.add{type="textfield",name="integratedCircuitry.min"}
@@ -97,17 +97,16 @@ gui["status-panel"].close = function(player)
 	if player.gui.left.statusPanel then
 		player.gui.left.statusPanel.destroy()
 	end
-	itemSelection_close(player)
 end
 
 gui["status-panel"].click = function(nameArr,player,entity)
 	local fieldName = table.remove(nameArr,1)
 	if fieldName == "signal" then
 		local box = player.gui.left.statusPanel.table["integratedCircuitry.signal"]
-		if box.sprite == "" then
-			itemSelection_open(player,{TYPE_ITEM, TYPE_FLUID, TYPE_SIGNAL, TYPE_HIDE_ALL_EACH_ANY},function(arr)
-				m.setSignal(player,entity,arr)
-			end)
+		local itemName = box.elem_value
+		if itemName then
+			local prototype = prototypesForGroup("item")[itemName]
+			m.setSignal(player,entity,{type="item",name=itemName,prototype=prototype})
 		else
 			m.setSignal(player,entity,nil)
 		end
@@ -135,16 +134,16 @@ m.setSignal = function(player,entity,arr)
 		type = arr.type
 	}
 	data.min = 0
-	if arr.type == TYPE_ITEM then
+	if arr.type == "item" then
 		data.max = arr.prototype.stack_size
 		if arr.prototype.subgroup.name == "raw-material" then
 			data.max = arr.prototype.stack_size * 5
 		elseif arr.prototype.subgroup.name == "module" then
 			data.max = arr.prototype.stack_size * 0.2
 		end
-	elseif arr.type == TYPE_FLUID then
+	elseif arr.type == "fluid" then
 		data.max = 25000
-	elseif arr.type == TYPE_SIGNAL then
+	elseif arr.type == "signal" then
 		data.max = 100
 	end
 	m.updateGui(player,entity)
@@ -158,12 +157,9 @@ m.updateGui = function(player,entity)
 	tab["integratedCircuitry.max"].text = data.max or ""
 	local signal = tab["integratedCircuitry.signal"]
 	if data.signal then
-		signal.sprite = data.signal.type.."/"..data.signal.name
-		local prototypes = itemSelection_prototypesForGroup(data.signal.type)
-		signal.tooltip = prototypes[data.signal.name].localised_name
+		signal.elem_value = data.signal.name
 	else
-		signal.sprite = ""
-		signal.tooltip = ""
+		signal.elem_value = nil
 	end		
 end
 

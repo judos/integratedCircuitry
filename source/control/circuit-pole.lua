@@ -1,4 +1,3 @@
-require "libs.itemSelection.control"
 
 -- Registering entity into system
 local circuitPole = {}

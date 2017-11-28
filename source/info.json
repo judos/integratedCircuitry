@@ -1,9 +1,9 @@
 {
 	"name": "integratedCircuitry",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"title": "Integrated Circuitry",
 	"author": "judos",
-	"description": "Add several combinators used to achieve much more complex circuit logic",
+	"description": "Nicer lamps for status indication, Status bars to show level of items, fixed circuit wire overlapping, and more coming...",
 	"dependencies": ["base >= 0.15.0"],
 	"homepage": "https://github.com/judos/integratedCircuitry",
 	"factorio_version": "0.15"

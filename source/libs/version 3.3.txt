@@ -1,3 +1,6 @@
+3.3 integratedCircuitry
+	added prototypesForGroup
+
 3.2 hardCrafting
 	fix logging error when game is nil
 	fix prototypes class not dealing with advanced stack tables
