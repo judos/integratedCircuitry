@@ -5,7 +5,8 @@ require "prototypes.compact-combinator-io"
 local item = deepcopy(data.raw["item"]["iron-chest"])
 overwriteContent(item, {
 	name = "compact-combinator",
-	order = "a",
+	subgroup = "circuit-network",
+	order = "c[combinators]-e[compact-combinator]",
 	place_result = "compact-combinator",
 	--icon = "__integratedCircuitry__/graphics/icons/lamp-panel.png",
 })
