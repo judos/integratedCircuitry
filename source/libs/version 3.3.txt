@@ -2,6 +2,8 @@
 	added: prototypesForGroup in control.functions
 	removed: idOfEntity_v21, entityOfId_v21
 	added: positionOfId in control.entityId
+	changes:
+		gui - better error message when events can't be routed to a button
 
 3.2 hardCrafting
 	fix logging error when game is nil
