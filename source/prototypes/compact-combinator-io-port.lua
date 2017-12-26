@@ -3,11 +3,11 @@ require "libs.prototypes.all"
 -- Item
 local item = deepcopy(data.raw["item"]["iron-chest"])
 overwriteContent(item, {
-	name = "compact-io-port",
+	name = "compact-combinator-io-port",
 	subgroup = "circuit-network",
-	order = "c[combinators]-e[compact-combinator-port]",
-	place_result = "compact-io-port",
-	--icon = "__integratedCircuitry__/graphics/icons/lamp-panel.png",
+	order = "c[combinators]-e[compact-combinator-io-port]",
+	place_result = "compact-combinator-io-port",
+	icon = "__integratedCircuitry__/graphics/icons/compact-combinator-io-port.png",
 })
 data:extend({	item })
 
@@ -15,12 +15,12 @@ data:extend({	item })
 data:extend({
 	{
 		type = "recipe",
-		name = "compact-io-port",
+		name = "compact-combinator-io-port",
 		enabled = true,
 		ingredients = {
 			{"electronic-circuit", 3},
 		},
-		result = "compact-io-port"
+		result = "compact-combinator-io-port"
 	}
 })
 
@@ -28,12 +28,12 @@ data:extend({
 -- Entity
 local entity = deepcopy(data.raw["container"]["iron-chest"])
 overwriteContent(entity, {
-	name = "compact-io-port",
+	name = "compact-combinator-io-port",
 	collision_box = {{-0.4, -0.4}, {0.4, 0.4}},
   selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	inventory_size = 0,
 	picture = {
-		filename = "__integratedCircuitry__/graphics/entity/compact-io-port.png",
+		filename = "__integratedCircuitry__/graphics/entity/compact-combinator-io-port.png",
 		priority = "extra-high",
 		width = 52,
 		height = 40,
@@ -53,8 +53,8 @@ overwriteContent(entity, {
 })
 entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
-entity.minable.result = "compact-io-port"
+entity.minable.result = "compact-combinator-io-port"
 data:extend({	entity })
 
-addTechnologyUnlocksRecipe("circuit-network","compact-io-port")
+addTechnologyUnlocksRecipe("circuit-network","compact-combinator-io-port")
 

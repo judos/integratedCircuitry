@@ -1,5 +1,5 @@
 require "libs.prototypes.all"
-require "prototypes.compact-combinator-io"
+require "prototypes.compact-combinator-io-port"
 
 -- Item
 local item = deepcopy(data.raw["item"]["iron-chest"])
