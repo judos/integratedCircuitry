@@ -33,7 +33,7 @@ guiMethods.close = function(player)
 end
 
 guiMethods.click = function(nameArr, player, entity)
-	local button = nameArr.remove()
+	local button = table.remove(nameArr,1)
 	if button == "compact-combinator" then
 		player.teleport({0,0},m.getCircuitSurface())
 		player.gui.left[teleportButtonName].destroy()
