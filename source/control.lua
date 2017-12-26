@@ -5,7 +5,7 @@ require "libs.control.functions"
 require "constants"
 
 require "control.status-panel"
-require "control.filter-combinator"
+--require "control.filter-combinator"
 require "control.circuit-pole"
 require "control.compact-combinator"
 
