@@ -7,6 +7,7 @@ overwriteContent(statusPanel, {
 	order = "z[statusPanel]",
 	place_result = "status-panel",
 	icon = "__integratedCircuitry__/graphics/icons/status-panel.png",
+	icon_size = 32,
 })
 data:extend({	statusPanel })
 
@@ -34,6 +35,7 @@ overwriteContent(statusPanel, {
   selection_box = {{-0.5, -1.5}, {0.5, 1.5}},
 	light = {intensity = 0.1, size = 5, color = {r=1.0, g=1.0, b=1.0}},
 	icon = "__integratedCircuitry__/graphics/icons/status-panel.png",
+	icon_size = 32,
 	picture_off = {
 		filename = "__integratedCircuitry__/graphics/entity/status-panel-base.png",
 		priority = "low",
@@ -73,6 +75,7 @@ local statusPanelSprite = {
 	name = "ic-status-panel-sprite",
 	render_layer = "higher-object-above",
 	icon = "__integratedCircuitry__/graphics/entity/status-panel-patch.png",
+	icon_size = 32,
 	flags = {"placeable-neutral", "placeable-off-grid", "player-creation"},
 	order = "s-e-w-o",
 	max_health = 100,
