@@ -7,4 +7,4 @@ fullModName = "integratedCircuitry" -- required for logging and prototypes
 libLog.debug_master = true
 --libLog.testing = true
 --libLog.testing = false
---libLog.debug_level = 1  -- 1=info 2=warn 3=error
+libLog.debug_level = 1  -- 1=info 2=warn 3=error

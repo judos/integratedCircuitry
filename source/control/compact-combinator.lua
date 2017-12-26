@@ -2,9 +2,11 @@
 -- Registering entity into system
 local entityMethods = {}
 entities["compact-combinator"] = entityMethods
+local guiMethods = {}
+gui["compact-combinator"] = guiMethods
 
 -- Constants
-local m = {} --used for methods of the entity
+local m = {} --private methods
 
 ---------------------------------------------------
 -- entityData
@@ -12,13 +14,35 @@ local m = {} --used for methods of the entity
 
 -- Used data:
 -- {
---		output = constant-combinator which is used as output
+--		io = constant-combinator which is used as input/output
 -- }
 
 --------------------------------------------------
--- Global data
+-- Gui testing
 --------------------------------------------------
+local teleportButtonName = "integratedCircuitry.compact-combinator"
 
+guiMethods.open = function(player, entity)
+	player.gui.left.add{type="button",name=teleportButtonName,caption="Teleport"}
+end
+
+guiMethods.close = function(player)
+	if player.gui.left[teleportButtonName] then
+		player.gui.left[teleportButtonName].destroy()
+	end
+end
+
+guiMethods.click = function(nameArr, player, entity)
+	local button = nameArr.remove()
+	if button == "compact-combinator" then
+		player.teleport({0,0},m.getCircuitSurface())
+		player.gui.left[teleportButtonName].destroy()
+		player.gui.left.add{type="button",name="integratedCircuitry.compact-combinator-back",caption="Teleport back"}
+	elseif button == "compact-combinator-back" then
+		player.teleport({0,0},game.surfaces["nauvis"])
+		player.gui.left[teleportButtonName.."-back"].destroy()
+	end
+end
 
 ---------------------------------------------------
 -- build and remove
@@ -49,16 +73,23 @@ entityMethods.build = function(entity)
 		io[i].operable = false
 	end
 	
-	game.create_surface("circuit",{
-		terrain_segmentation="none",water="none",autoplace_controls={},width=10,height=10
-	})
-	local surface = game.surfaces["circuit"]
-	surface.request_to_generate_chunks({0,0}, 32)
+	local surface = m.getCircuitSurface()
 	
 	return {
 		io = io,
-		surface = surface
 	}
+end
+
+m.getCircuitSurface = function()
+	local surfaceName = "compact-circuits"
+	local surface = game.surfaces[surfaceName]
+	if surface~=nil then return surface end
+	game.create_surface(surfaceName,{
+		terrain_segmentation="none",water="none",autoplace_controls={}
+	})
+	surface = game.surfaces[surfaceName]
+	surface.request_to_generate_chunks({0,0}, 32)
+	return game.surfaces[surfaceName]
 end
 
 entityMethods.remove = function(data)
@@ -67,19 +98,11 @@ entityMethods.remove = function(data)
 			data.io[i].destroy()
 		end
 	end
-	if data.surface and data.surface.valid then
-		game.delete_surface(data.surface.name)
-	end
 end
 
 entityMethods.copy = function(source,srcData,target,targetData)
 	
 end
-
----------------------------------------------------
--- gui actions
----------------------------------------------------
-
 
 ---------------------------------------------------
 -- update tick
@@ -90,8 +113,8 @@ entityMethods.tick = function(entity,data)
 		err("Error occured with status-panel: "..idOfEntity(filterCombinator))
 		return 0,nil
 	end
-	if not data.checked and data.surface.is_chunk_generated({0,0}) then
-		m.removeAllSurfaceEntities(data.surface)
+	if not data.checked and m.getCircuitSurface().is_chunk_generated({0,0}) then
+		m.removeAllSurfaceEntities()
 		data.checked = true
 	end
 	
@@ -108,10 +131,10 @@ end
 
 m.buildAndReviveBlueprint = function(item,data)
 	item.build_blueprint{
-		surface=data.surface,force=data.io[1].force,position={0,0},
+		surface=m.getCircuitSurface(),force=data.io[1].force,position={0,0},
 		force_build=true
 	}
-	local entities = data.surface.find_entities({{-10,-10},{10,10}})
+	local entities = m.getCircuitSurface().find_entities({{-10,-10},{10,10}})
 	for _,x in pairs(entities) do
 		x.revive()
 	end
@@ -130,9 +153,9 @@ m.getValidBlueprintItem = function(entity)
 	return nil
 end
 
-m.removeAllSurfaceEntities = function(surface)
-	surface.destroy_decoratives({{-10,-10},{10,10}})
-	local entities = surface.find_entities({{-10,-10},{10,10}})
+m.removeAllSurfaceEntities = function()
+	m.getCircuitSurface().destroy_decoratives({{-10,-10},{10,10}})
+	local entities = m.getCircuitSurface().find_entities()
 	for _,x in pairs(entities) do
 		x.destroy()
 	end
