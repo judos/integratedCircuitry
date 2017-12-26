@@ -18,14 +18,15 @@ require "control.compact-combinator"
 ---------------------------------------------------
 script.on_init(function()
 	if not global.integratedCircuitry then global.integratedCircuitry = {} end
-	local bs = global.integratedCircuitry
-	if not bs.version then bs.version = modVersion end
+	local data = global.integratedCircuitry
+	if not data.version then data.version = modVersion end
 	
 	entities_init()
 	gui_init()
 end)
 
 script.on_load(function()
+	entities_load()
 end)
 
 script.on_configuration_changed(function()
