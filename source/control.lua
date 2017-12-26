@@ -12,6 +12,8 @@ require "control.compact-combinator"
 
 -- global data used:
 -- integratedCircuitry.version = $version
+-- integratedCircuitry.surface:
+--    See compact-combinator-surface.lua
 
 ---------------------------------------------------
 -- Init

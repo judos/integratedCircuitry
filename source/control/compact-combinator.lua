@@ -1,3 +1,4 @@
+local Surface = require("control.compact-combinator-surface")
 
 -- Registering entity into system
 local entityMethods = {}
@@ -14,7 +15,15 @@ local m = {} --private methods
 
 -- Used data:
 -- {
---		io = constant-combinator which is used as input/output
+--		version = 1 (in the current version)
+--		io = {[1]=... [4]=..} constant-combinator which is used as input/output
+--		size = size of the blueprint used (in the current version 10x10)
+--    chunkPos = position of the center of the blueprint (usally expands by {{-5,-5},{4,4}}
+--		state = enum(
+--			"chunk-gen" generation of chunk requested
+--			"empty"			chunk and tiles generated
+--			"built"			blueprint is built and connected
+--		)
 -- }
 
 --------------------------------------------------
@@ -35,7 +44,8 @@ end
 guiMethods.click = function(nameArr, player, entity)
 	local button = table.remove(nameArr,1)
 	if button == "compact-combinator" then
-		player.teleport({0,0},m.getCircuitSurface())
+		local data = global.entityData[idOfEntity(entity)]
+		player.teleport({data.chunkPos[1]*32+16,data.chunkPos[2]*32+16},Surface.get())
 		player.gui.left[teleportButtonName].destroy()
 		player.gui.left.add{type="button",name="integratedCircuitry.compact-combinator-back",caption="Teleport back"}
 	elseif button == "compact-combinator-back" then
@@ -73,24 +83,18 @@ entityMethods.build = function(entity)
 		io[i].operable = false
 	end
 	
-	local surface = m.getCircuitSurface()
+	-- generate surface if not existed yet
+	local surface = Surface.get()
 	
 	return {
+		version = 1,
 		io = io,
+		size = 10,
+		chunkPos = Surface.newSpot(),
+		state = "chunk-gen"
 	}
 end
 
-m.getCircuitSurface = function()
-	local surfaceName = "compact-circuits"
-	local surface = game.surfaces[surfaceName]
-	if surface~=nil then return surface end
-	game.create_surface(surfaceName,{
-		terrain_segmentation="none",water="none",autoplace_controls={}
-	})
-	surface = game.surfaces[surfaceName]
-	surface.request_to_generate_chunks({0,0}, 32)
-	return game.surfaces[surfaceName]
-end
 
 entityMethods.remove = function(data)
 	if data.io then
@@ -98,6 +102,7 @@ entityMethods.remove = function(data)
 			data.io[i].destroy()
 		end
 	end
+	Surface.freeSpot(data.chunkPos)
 end
 
 entityMethods.copy = function(source,srcData,target,targetData)
@@ -113,32 +118,30 @@ entityMethods.tick = function(entity,data)
 		err("Error occured with status-panel: "..idOfEntity(filterCombinator))
 		return 0,nil
 	end
-	if not data.checked and m.getCircuitSurface().is_chunk_generated({0,0}) then
-		m.removeAllSurfaceEntities()
-		data.checked = true
-	end
 	
-	local item = m.getValidBlueprintItem(entity)
-	if item~=nil and data.checked and not data.built then
-		print(serpent.block(item.get_blueprint_entities()))
-		m.buildAndReviveBlueprint(item,data)
-		data.built = true
-		err("Blueprint built")
+	if data.state == "chunk-gen" then
+		if Surface.get().is_chunk_generated({0,0}) then
+			Surface.placeTiles(data.chunkPos)
+			data.state = "empty"
+			info("chunk generated: "..serpent.block(data.chunkPos))
+		else
+			info("waiting for chunk gen: "..serpent.block(data.chunkPos))
+		end
+	end
+	if data.state == "empty" then
+		local item = m.getValidBlueprintItem(entity)
+		if item~=nil then
+			Surface.buildBlueprint(data.chunkPos,item,data.io[1].force)
+			data.state = "built"
+			info("Blueprint built")
+		else
+			warn("no valid blueprint item inserted")
+		end
 	end
 	
 	return 10
 end
 
-m.buildAndReviveBlueprint = function(item,data)
-	item.build_blueprint{
-		surface=m.getCircuitSurface(),force=data.io[1].force,position={0,0},
-		force_build=true
-	}
-	local entities = m.getCircuitSurface().find_entities({{-10,-10},{10,10}})
-	for _,x in pairs(entities) do
-		x.revive()
-	end
-end
 
 m.getValidBlueprintItem = function(entity)
 	local inv = entity.get_inventory(defines.inventory.chest)
@@ -153,12 +156,4 @@ m.getValidBlueprintItem = function(entity)
 	return nil
 end
 
-m.removeAllSurfaceEntities = function()
-	m.getCircuitSurface().destroy_decoratives({{-10,-10},{10,10}})
-	local entities = m.getCircuitSurface().find_entities()
-	for _,x in pairs(entities) do
-		x.destroy()
-	end
-	err("Surface created, entities removed...")
-end
 
