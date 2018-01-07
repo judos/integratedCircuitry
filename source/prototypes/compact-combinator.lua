@@ -27,12 +27,12 @@ data:extend({
 
 
 -- Entity
-local entity = deepcopy(data.raw["container"]["iron-chest"])
+local entity = deepcopy(data.raw["constant-combinator"]["constant-combinator"])
 overwriteContent(entity, {
 	name = "compact-combinator",
 	collision_box = {{-0.5, -0.5}, {0.5, 0.5}},
   selection_box = {{-0.5, -0.2}, {0.5, 0.2}},
-	inventory_size = 1,
+	item_slot_count = 1,
 })
 entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil

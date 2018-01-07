@@ -144,8 +144,8 @@ end
 
 
 m.getValidBlueprintItem = function(entity)
-	local inv = entity.get_inventory(defines.inventory.chest)
-	if not inv.is_empty() then
+	--local inv = entity.get_inventory(defines.inventory.chest)
+	if inv~=nil and not inv.is_empty() then
 		local item = inv[1]
 		if item.valid then
 			if item.is_blueprint_setup() then
