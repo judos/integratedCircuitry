@@ -4,7 +4,7 @@ modName = "integratedCircuitry" -- required prefix for all ui name components wh
 fullModName = "integratedCircuitry" -- required for logging and prototypes
 
 
-libLog.debug_master = true
-libLog.testing = true
---libLog.testing = false
-libLog.debug_level = 1  -- 1=info 2=warn 3=error
+logging.debug_master = true
+logging.testing = true -- enables player printing of every log, sets log level to info
+--logging.testing = false
+--logging.debug_level = 1  -- 1=info 2=warn 3=error
