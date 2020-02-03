@@ -135,7 +135,7 @@ entityMethods.tick = function(entity,data)
 			data.state = "built"
 			info("Blueprint built")
 		else
-			warn("no valid blueprint item inserted")
+			--warn("no valid blueprint item inserted")
 		end
 	end
 	

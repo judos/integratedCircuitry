@@ -1,0 +1,2 @@
+
+Status panel should copy settings in blueprint

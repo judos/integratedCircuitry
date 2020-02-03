@@ -1,5 +1,4 @@
 require "libs.prototypes.all"
-require "prototypes.compact-combinator-io-port"
 
 -- Item
 local item = deepcopy(data.raw["item"]["iron-chest"])
@@ -8,7 +7,7 @@ overwriteContent(item, {
 	subgroup = "circuit-network",
 	order = "c[combinators]-e[compact-combinator]",
 	place_result = "compact-combinator",
-	--icon = "__integratedCircuitry__/graphics/icons/lamp-panel.png",
+	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
 })
 data:extend({	item })
 
@@ -19,7 +18,8 @@ data:extend({
 		name = "compact-combinator",
 		enabled = true,
 		ingredients = {
-			{"steel-plate", 1},
+			{"steel-plate", 5},
+			{"advanced-circuit", 5}
 		},
 		result = "compact-combinator"
 	}
@@ -27,27 +27,44 @@ data:extend({
 
 
 -- Entity
-local entity = deepcopy(data.raw["constant-combinator"]["constant-combinator"])
+local entity = deepcopy(data.raw["container"]["iron-chest"])
 overwriteContent(entity, {
 	name = "compact-combinator",
-	collision_box = {{-0.5, -0.5}, {0.5, 0.5}},
-  selection_box = {{-0.5, -0.2}, {0.5, 0.2}},
-	item_slot_count = 1,
+	collision_box = {{-0.9, -0.9}, {0.9, 0.9}},
+  selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+	inventory_size = 0,
+	picture = {
+		filename = "__integratedCircuitry__/graphics/entity/compact-combinator.png",
+		priority = "extra-high",
+		width = 120,
+		height = 120,
+		shift = util.by_pixel(0, -0.5),
+--		hr_version = {
+--			filename = "__base__/graphics/entity/iron-chest/hr-iron-chest.png",
+--			priority = "extra-high",
+--			width = 66,
+--			height = 76,
+--			shift = util.by_pixel(-0.5, -0.5),
+--			scale = 0.5
+--		}
+	}
 })
 entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
 entity.minable.result = "compact-combinator"
 data:extend({	entity })
 
+
+-- Port
 local entity = deepcopy(data.raw["container"]["iron-chest"])
 overwriteContent(entity, {
 	name = "compact-combinator-io",
-	collision_box = {{-0.25, -0.15}, {0.25, 0.15}},
-  selection_box = {{-0.25, -0.15}, {0.25, 0.15}},
+	collision_box = {{-0.25, -0.25}, {0.25, 0.25}},
+  selection_box = {{-0.25, -0.25}, {0.25, 0.25}},
 	inventory_size = 0,
-	circuit_wire_max_distance = 100000,
+	circuit_wire_max_distance = 1000000,
 	order="a",
-	flags = {"placeable-neutral", "placeable-off-grid", "not-on-map"},
+	flags = {"hidden", "placeable-neutral", "placeable-off-grid", "not-on-map"},
 	circuit_wire_connection_point = {
 		shadow = {
 			red = {0, 0.1},
@@ -63,7 +80,7 @@ entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
 entity.picture.width = 1
 entity.picture.height= 1
-entity.minable.result = "compact-combinator"
+entity.minable.result = nil
 data:extend({	entity })
 
 
