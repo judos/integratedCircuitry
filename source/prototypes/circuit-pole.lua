@@ -34,7 +34,11 @@ overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	place_result = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
-	minable = {hardness = 0.2, mining_time = 0.5, result = "circuit-pole"},
+	minable = {
+		hardness = circuitPole.minable.hardness, 
+		mining_time = circuitPole.minable.mining_time, 
+		result = "circuit-pole"
+	},
 	maximum_wire_distance = 15,
 	supply_area_distance = 0,
 	pictures = {
