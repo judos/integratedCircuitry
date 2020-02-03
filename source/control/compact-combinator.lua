@@ -63,24 +63,19 @@ entityMethods.build = function(entity)
 	local position = entity.position
 	
 	local io = {}
-	local ox = 0.25
-	local oy = 0.35
-	io[1] = entity.surface.create_entity{
-		name="compact-combinator-io", position= {x=position.x-ox , y=position.y-oy}, force=entity.force
-	}
-	io[2] = entity.surface.create_entity{
-		name="compact-combinator-io", position= {x=position.x+ox , y=position.y-oy}, force=entity.force
-	}
-	io[3] = entity.surface.create_entity{
-		name="compact-combinator-io", position= {x=position.x-ox , y=position.y+oy}, force=entity.force
-	}
-	io[4] = entity.surface.create_entity{
-		name="compact-combinator-io", position= {x=position.x+ox , y=position.y+oy}, force=entity.force
-	}
-	for i=1,4 do
-		io[i].destructible = false
-		io[i].minable = false
-		io[i].operable = false
+	for x=-0.75,0.75,0.5 do
+		for y=-0.75,0.75,0.5 do
+			if math.abs(x)==0.75 or math.abs(y)==0.75 then
+				local p = entity.surface.create_entity{
+					name="compact-combinator-io", position= {x=position.x+x , y=position.y+y}, force=entity.force
+				}
+				p.destructible = false
+				p.minable = false
+				p.operable = false
+				p.disconnect_neighbour()
+				table.insert(io, p)
+			end
+		end
 	end
 	
 	-- generate surface if not existed yet
@@ -89,7 +84,7 @@ entityMethods.build = function(entity)
 	return {
 		version = 1,
 		io = io,
-		size = 10,
+		size = 20,
 		chunkPos = Surface.newSpot(),
 		state = "chunk-gen"
 	}
@@ -98,8 +93,8 @@ end
 
 entityMethods.remove = function(data)
 	if data.io then
-		for i=1,4 do
-			data.io[i].destroy()
+		for k,e in pairs(data.io) do
+			e.destroy()
 		end
 	end
 	Surface.freeSpot(data.chunkPos)
@@ -129,31 +124,11 @@ entityMethods.tick = function(entity,data)
 		end
 	end
 	if data.state == "empty" then
-		local item = m.getValidBlueprintItem(entity)
-		if item~=nil then
-			Surface.buildBlueprint(data.chunkPos,item,data.io[1].force)
-			data.state = "built"
-			info("Blueprint built")
-		else
-			--warn("no valid blueprint item inserted")
-		end
+		
 	end
 	
-	return 10
+	return 10 --sleep to next update
 end
 
-
-m.getValidBlueprintItem = function(entity)
-	--local inv = entity.get_inventory(defines.inventory.chest)
-	if inv~=nil and not inv.is_empty() then
-		local item = inv[1]
-		if item.valid then
-			if item.is_blueprint_setup() then
-				return item
-			end
-		end
-	end
-	return nil
-end
 
 

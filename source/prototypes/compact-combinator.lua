@@ -56,30 +56,39 @@ data:extend({	entity })
 
 
 -- Port
-local entity = deepcopy(data.raw["container"]["iron-chest"])
+local entity = deepcopy(data.raw["electric-pole"]["small-electric-pole"])
 overwriteContent(entity, {
 	name = "compact-combinator-io",
 	collision_box = {{-0.25, -0.25}, {0.25, 0.25}},
   selection_box = {{-0.25, -0.25}, {0.25, 0.25}},
-	inventory_size = 0,
-	circuit_wire_max_distance = 1000000,
 	order="a",
+	track_coverage_during_build_by_moving = false,
+	supply_area_distance = 0,
 	flags = {"hidden", "placeable-neutral", "placeable-off-grid", "not-on-map"},
-	circuit_wire_connection_point = {
-		shadow = {
-			red = {0, 0.1},
-			green = {0.05, 0.15},
-		},
-		wire = {
-			red = {0, 0},
-			green = {0.05, 0.05},
+	connection_points = {
+		{
+			shadow = {
+				red = {0, 0.1},
+				green = {0.05, 0.15},
+			},
+			wire = {
+				red = {0, 0},
+				green = {0.05, 0.05},
+			}
 		}
 	},
+	pictures = {
+		filename = "__integratedCircuitry__/graphics/empty4x1.png",
+		priority = "extra-high",
+		width = 1,
+		height = 1,
+		direction_count = 1,
+		shift = {0, 0}
+	},
 })
+	
 entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
-entity.picture.width = 1
-entity.picture.height= 1
 entity.minable.result = nil
 data:extend({	entity })
 
