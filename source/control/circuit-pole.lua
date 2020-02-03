@@ -41,6 +41,7 @@ end
 
 circuitPole.build = function(entity)
 	entity.disconnect_neighbour()
+	entity.operable = false
 	return {
 	}
 end
