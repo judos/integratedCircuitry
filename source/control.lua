@@ -62,11 +62,9 @@ end)
 ---------------------------------------------------
 script.on_event(defines.events.on_built_entity, function(event)
 	entities_build(event)
-	circuitPole_build(event.created_entity)
 end)
 script.on_event(defines.events.on_robot_built_entity, function(event)
 	entities_build(event)
-	circuitPole_build(event.created_entity)
 end)
 
 ---------------------------------------------------

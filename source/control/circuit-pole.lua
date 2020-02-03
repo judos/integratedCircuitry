@@ -1,37 +1,34 @@
+local math2d = require("math2d")
+
 
 -- Registering entity into system
 local circuitPole = {}
+local mediumPole = {}
 entities["circuit-pole"] = circuitPole
+entities["medium-electric-pole"] = mediumPole
+entities["small-electric-pole"] = mediumPole
 
--- Constants
-local m = {} --used for methods of the circuitPole
-
-function circuitPole_build(entity)
-	if entity.type ~= "electric-pole" then
-		return
-	end
+function mediumPole.build(entity)
 	
-	-- diconnect all circuit poles
-	local disconnected = 0 
+	-- diconnect all circuit poles and measure distance to poles
+	local d={}
 	for k,e in pairs(entity.neighbours.copper) do
-		if e.name == "circuit-pole" then
-			entity.disconnect_neighbour(e)
-			disconnected = disconnected + 1
-		end
-	end
-	-- make some connnections if all have been removed
-	if #entity.neighbours.copper > 0 or disconnected==0 then
-		return
+		entity.disconnect_neighbour(e)
+		local distance = math2d.position.distance(entity.position, e.position)
+		table.insert(d, { distance= distance, entity = e} )
 	end
 	
-	local searchArea = {{entity.position.x-20, entity.position.y-20}, {entity.position.x+20, entity.position.y+20}}
-	local entities = entity.surface.find_entities_filtered{type="electric-pole",area = searchArea}
-	for _,e in pairs(entities) do
+	table.sort(d, function(x, y)
+		return x.distance < y.distance
+	end)
+	
+	for _,arr in pairs(d) do
+		local e = arr.entity
 		if e.name ~= "circuit-pole" then
 			entity.connect_neighbour(e)
-		end
-		if # entity.neighbours.copper >= 2 then
-			break
+			if # entity.neighbours.copper >= 2 then
+				break
+			end
 		end
 	end
 	
@@ -43,7 +40,6 @@ end
 ---------------------------------------------------
 
 circuitPole.build = function(entity)
-	
 	entity.disconnect_neighbour()
 	return {
 	}
