@@ -1,7 +1,7 @@
 require "libs.prototypes.all"
 
 -- Item
-local indicator = deepcopy(data.raw["item"]["small-lamp"])
+local indicator = table.deepcopy(data.raw["item"]["small-lamp"])
 overwriteContent(indicator, {
 	name = "lamp-panel",
 	order = "z[small-lamp]",
@@ -26,7 +26,7 @@ data:extend({
 
 
 -- Entity
-local indicator = deepcopy(data.raw["lamp"]["small-lamp"])
+local indicator = table.deepcopy(data.raw["lamp"]["small-lamp"])
 overwriteContent(indicator, {
 	name = "lamp-panel",
 	energy_usage_per_tick = "15KW",

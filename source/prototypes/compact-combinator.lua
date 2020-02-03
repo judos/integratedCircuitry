@@ -1,7 +1,7 @@
 require "libs.prototypes.all"
 
 -- Item
-local item = deepcopy(data.raw["item"]["iron-chest"])
+local item = table.deepcopy(data.raw["item"]["iron-chest"])
 overwriteContent(item, {
 	name = "compact-combinator",
 	subgroup = "circuit-network",
@@ -27,7 +27,7 @@ data:extend({
 
 
 -- Entity
-local entity = deepcopy(data.raw["container"]["iron-chest"])
+local entity = table.deepcopy(data.raw["container"]["iron-chest"])
 overwriteContent(entity, {
 	name = "compact-combinator",
 	collision_box = {{-0.9, -0.9}, {0.9, 0.9}},
@@ -56,7 +56,7 @@ data:extend({	entity })
 
 
 -- Port
-local entity = deepcopy(data.raw["electric-pole"]["small-electric-pole"])
+local entity = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])
 overwriteContent(entity, {
 	name = "compact-combinator-io",
 	collision_box = {{-0.25, -0.25}, {0.25, 0.25}},

@@ -4,6 +4,9 @@ TODO 4.0:
   MIGRATION
   	instead of string.starts use string.startsWith
 
+4.0 integratedCircuitry
+	removed deepcopy, use table.deepcopy from 'require "util"' instead
+
 
 3.9 beltSorter
 	gui:116 add check for updating gui state (open/close)

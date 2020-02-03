@@ -1,7 +1,7 @@
 
 -- Item
 
-local circuitPole = deepcopy(data.raw["item"]["small-electric-pole"])
+local circuitPole = table.deepcopy(data.raw["item"]["small-electric-pole"])
 overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
@@ -29,7 +29,7 @@ data:extend({
 
 -- Entity
 
-local circuitPole = deepcopy(data.raw["electric-pole"]["small-electric-pole"])
+local circuitPole = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])
 overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	place_result = "circuit-pole",

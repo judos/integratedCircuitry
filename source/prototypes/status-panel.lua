@@ -1,7 +1,7 @@
 require "libs.prototypes.all"
 
 -- Item
-local statusPanel = deepcopy(data.raw["item"]["small-lamp"])
+local statusPanel = table.deepcopy(data.raw["item"]["small-lamp"])
 overwriteContent(statusPanel, {
 	name = "status-panel",
 	order = "z[statusPanel]",
@@ -27,7 +27,7 @@ data:extend({
 
 
 -- Entity
-local statusPanel = deepcopy(data.raw["lamp"]["small-lamp"])
+local statusPanel = table.deepcopy(data.raw["lamp"]["small-lamp"])
 overwriteContent(statusPanel, {
 	name = "status-panel",
 	energy_usage_per_tick = "45KW",

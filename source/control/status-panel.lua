@@ -1,4 +1,5 @@
 require "libs.control.functions"
+require "util"
 
 -- Registering entity into system
 local statusPanel = {}
@@ -84,7 +85,7 @@ statusPanel.copy = function(source,srcData,target,targetData)
 	info("Copy entity: "..x(srcData).." target: "..x(targetData))
 	targetData.min = srcData.min
 	targetData.max = srcData.max
-	targetData.signal = deepcopy(srcData.signal)
+	targetData.signal = table.deepcopy(srcData.signal)
 end
 
 ---------------------------------------------------
@@ -199,7 +200,7 @@ statusPanel.tick = function(statusPanel,data)
 	
 	local signalGreen = statusPanel.get_circuit_network(defines.wire_type.green,1)
 	local signalRed = statusPanel.get_circuit_network(defines.wire_type.red,1)
-	local signal = deepcopy(data.signal)
+	local signal = table.deepcopy(data.signal)
 	if signal.type == "virtual-signal" then
 		signal.type = "virtual"
 	end
