@@ -99,7 +99,7 @@ gui["status-panel"].open = function(player,entity)
 	
 	local frame = player.gui.left.add{type="frame",name="statusPanel",direction="vertical",caption={"status-panel"}}
 	frame.add{type="label",name="description",caption={"status-panel-description"}}
-	frame.add{type="table",name="table",colspan=2}
+	frame.add{type="table",name="table",column_count=2}
 
 	frame.table.add{type="label",name="title",caption={"",{"signal"},":"}}
 	frame.table.add{type="choose-elem-button",name="integratedCircuitry.signal",elem_type="item"}
