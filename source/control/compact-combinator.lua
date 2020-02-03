@@ -29,28 +29,23 @@ local m = {} --private methods
 --------------------------------------------------
 -- Gui testing
 --------------------------------------------------
-local teleportButtonName = "integratedCircuitry.compact-combinator"
+local teleportBackButtonName = "integratedCircuitry.compact-combinator-back"
 
 guiMethods.open = function(player, entity)
-	player.gui.left.add{type="button",name=teleportButtonName,caption="Teleport"}
+	local data = global.entityData[idOfEntity(entity)]
+	player.teleport({data.chunkPos[1]*32+16,data.chunkPos[2]*32+16},Surface.get())
+	player.gui.left.add{type="button",name=teleportBackButtonName,caption="Teleport back"}
 end
 
 guiMethods.close = function(player)
-	if player.gui.left[teleportButtonName] then
-		player.gui.left[teleportButtonName].destroy()
-	end
+	
 end
 
 guiMethods.click = function(nameArr, player, entity)
 	local button = table.remove(nameArr,1)
-	if button == "compact-combinator" then
-		local data = global.entityData[idOfEntity(entity)]
-		player.teleport({data.chunkPos[1]*32+16,data.chunkPos[2]*32+16},Surface.get())
-		player.gui.left[teleportButtonName].destroy()
-		player.gui.left.add{type="button",name="integratedCircuitry.compact-combinator-back",caption="Teleport back"}
-	elseif button == "compact-combinator-back" then
+	if button == teleportBackButtonName then
 		player.teleport({0,0},game.surfaces["nauvis"])
-		player.gui.left[teleportButtonName.."-back"].destroy()
+		player.gui.left[teleportBackButtonName].destroy()
 	end
 end
 
