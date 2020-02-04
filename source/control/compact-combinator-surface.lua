@@ -3,16 +3,17 @@
 
 -- global data used:
 -- integratedCircuitry.surface = {
---		next_chunk = {x,y},			ChunkPosition
+--		next_chunk = {x,y},				ChunkPosition
 --		empty_chunks = {
---			{x,y}, ...						ChunkPosition
+--			{x,y}, ...							ChunkPosition
 --		},
---		width = width						number specifying how far it goes
+--		width = width							number specifying how far it goes
+--		firstTileRemoved = $bool	boolean, removes the mapgen 1x1 tile
 --	}
 
 
-
-local Surface = {}
+local Surface = {} -- exported interface
+local private = {} -- private methods
 
 -- returns the coordinates of a new chunk to be used for a compact-combinator
 function Surface.newSpot()
@@ -22,7 +23,8 @@ function Surface.newSpot()
 		data.surface = {
 			next_chunk = {0,0},
 			empty_chunks = {},
-			width = 50
+			width = 50,
+			firstTileRemoved = false
 		}
 	end
 	data = data.surface
@@ -44,12 +46,18 @@ function Surface.newSpot()
 	return result
 end
 
-function Surface.placeTiles(chunkPosition)
+function Surface.placeTiles(chunkPosition, size)
 	local tiles = {}
-	for dx=0,31 do for dy=0,31 do
+	if not private.data().firstTileRemoved then
+		table.insert(tiles, {name="out-of-map",position={0,0}})
+		private.data().firstTileRemoved = true
+	end
+	local start = 16 - math.floor((size-1)/2)
+	local to = start + (size-1)
+	for dx=start,to do for dy=start,to do
 		local x = chunkPosition[1] * 32 + dx
 		local y = chunkPosition[2] * 32 + dy
-		table.insert(tiles,{name="sand-1",position={x,y}})
+		table.insert(tiles,{name="refined-concrete",position={x,y}})
 	end end
 	Surface.get().set_tiles(tiles)
 end
@@ -57,8 +65,7 @@ end
 
 function Surface.freeSpot(chunkPosition)
 	Surface.removeEntities(chunkPosition)
-	local data = global.integratedCircuitry.surface
-	table.insert(data.empty_chunks,chunkPosition)
+	table.insert(private.data().empty_chunks,chunkPosition)
 end
 
 function Surface.removeEntities(chunkPosition)
@@ -76,11 +83,14 @@ function Surface.get()
 	game.create_surface(surfaceName,{width=1,height=1,peaceful_mode=true})
 	surface = game.surfaces[surfaceName]
 	surface.always_day = true
+	surface.wind_speed = 0
 	surface.request_to_generate_chunks({0,0}, 0)
 	return game.surfaces[surfaceName]
 end
 
-
+function private.data()
+	return global.integratedCircuitry.surface
+end
 
 
 

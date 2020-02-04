@@ -27,13 +27,12 @@ local private = {} -- private methods
 -- Used data:
 -- {
 --		version = 1 (in the current version)
---		io = {[1]=... [4]=..} constant-combinator which is used as input/output
---		size = size of the blueprint used (in the current version 10x10)
---    chunkPos = position of the center of the blueprint (usally expands by {{-5,-5},{4,4}}
+--		io = {[1]=... [12]=...} constant-combinator which is used as input/output
+--		size = size of the blueprint used
+--    chunkPos = position of the center of the blueprint
 --		state = enum(
 --			"chunk-gen" generation of chunk requested
 --			"empty"			chunk and tiles generated
---			"built"			blueprint is built and connected
 --		)
 -- }
 
@@ -125,12 +124,12 @@ end
 entityMethods.tick = function(entity,data)
 	if not data then
 		err("Error occured with status-panel: "..idOfEntity(filterCombinator))
-		return 0,nil
+		return 300,nil
 	end
 	
 	if data.state == "chunk-gen" then
-		if Surface.get().is_chunk_generated({0,0}) then
-			Surface.placeTiles(data.chunkPos)
+		if Surface.get().is_chunk_generated(data.chunkPos) then
+			Surface.placeTiles(data.chunkPos, data.size)
 			data.state = "empty"
 			info("chunk generated: "..serpent.block(data.chunkPos))
 		else
@@ -138,7 +137,7 @@ entityMethods.tick = function(entity,data)
 		end
 	end
 	if data.state == "empty" then
-		
+		return 300 -- no need to update anymore
 	end
 	
 	return 10 --sleep to next update
