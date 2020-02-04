@@ -70,9 +70,10 @@ local function handleEvent(uiComponentIdentifier,player)
 			local entityName = table.remove(guiEvent,1)
 			if gui[entityName].click ~= nil then
 				gui[entityName].click(guiEvent,player,nil)
+			else
+				warn("No entityName found for player "..player.name)
+				warn(global.gui.playerData[player.name])
 			end
-			warn("No entityName found for player "..player.name)
-			warn(global.gui.playerData[player.name])
 		else
 			warn("No gui registered for "..entityName)
 		end

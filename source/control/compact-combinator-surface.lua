@@ -8,7 +8,6 @@
 --			{x,y}, ...							ChunkPosition
 --		},
 --		width = width							number specifying how far it goes
---		firstTileRemoved = $bool	boolean, removes the mapgen 1x1 tile
 --	}
 
 
@@ -17,17 +16,7 @@ local private = {} -- private methods
 
 -- returns the coordinates of a new chunk to be used for a compact-combinator
 function Surface.newSpot()
-	local data = global.integratedCircuitry
-	if not data then err("Data not available"); return nil end
-	if not data.surface then 
-		data.surface = {
-			next_chunk = {0,0},
-			empty_chunks = {},
-			width = 50,
-			firstTileRemoved = false
-		}
-	end
-	data = data.surface
+	local data = private.data()
 	
 	-- If a spot got free use this instead of allocating new spot
 	if #data.empty_chunks > 0 then
@@ -41,17 +30,13 @@ function Surface.newSpot()
 	end
 	data.next_chunk = nextChunk
 	
-	Surface.get().request_to_generate_chunks({result[1],result[2]}, 0)
-	info("requested chunk-gen of "..serpent.block(result))
+	--Surface.get().request_to_generate_chunks({result[1]*32,result[2]*32}, 1)
+	--info("requested chunk-gen of "..serpent.block(result))
 	return result
 end
 
 function Surface.placeTiles(chunkPosition, size)
 	local tiles = {}
-	if not private.data().firstTileRemoved then
-		table.insert(tiles, {name="out-of-map",position={0,0}})
-		private.data().firstTileRemoved = true
-	end
 	local start = 16 - math.floor((size-1)/2)
 	local to = start + (size-1)
 	for dx=start,to do for dy=start,to do
@@ -60,6 +45,11 @@ function Surface.placeTiles(chunkPosition, size)
 		table.insert(tiles,{name="refined-concrete",position={x,y}})
 	end end
 	Surface.get().set_tiles(tiles)
+end
+
+function Surface.startPos(chunkPosition, size)
+	local start = 16 - math.floor((size-1)/2)
+	return {chunkPosition[1] * 32 + start, chunkPosition[2] * 32 + start}
 end
 
 
@@ -84,12 +74,22 @@ function Surface.get()
 	surface = game.surfaces[surfaceName]
 	surface.always_day = true
 	surface.wind_speed = 0
-	surface.request_to_generate_chunks({0,0}, 0)
+	surface.request_to_generate_chunks({0,0}, 1)
+	surface.force_generate_chunk_requests()
+	table.insert(tiles, {name="out-of-map",position={0,0}})
 	return game.surfaces[surfaceName]
 end
 
 function private.data()
-	return global.integratedCircuitry.surface
+	local d = global.integratedCircuitry
+	if not d.surface then
+		d.surface = {
+			next_chunk = {0,0},
+			empty_chunks = {},
+			width = 50
+		}
+	end
+	return d.surface
 end
 
 

@@ -30,10 +30,6 @@ local private = {} -- private methods
 --		io = {[1]=... [12]=...} constant-combinator which is used as input/output
 --		size = size of the blueprint used
 --    chunkPos = position of the center of the blueprint
---		state = enum(
---			"chunk-gen" generation of chunk requested
---			"empty"			chunk and tiles generated
---		)
 -- }
 
 --------------------------------------------------
@@ -72,35 +68,49 @@ end
 ---------------------------------------------------
 
 entityMethods.build = function(entity)
-	scheduleAdd(entity, TICK_ASAP)
+	--scheduleAdd(entity, TICK_ASAP)
 	local position = entity.position
 	
 	local io = {}
-	for x=-0.75,0.75,0.5 do
-		for y=-0.75,0.75,0.5 do
-			if math.abs(x)==0.75 or math.abs(y)==0.75 then
-				local p = entity.surface.create_entity{
-					name="compact-combinator-io", position= {x=position.x+x , y=position.y+y}, force=entity.force
-				}
-				p.destructible = false
-				p.minable = false
-				p.operable = false
-				p.disconnect_neighbour()
-				table.insert(io, p)
-			end
-		end
+	for x=-0.75,0.75,0.5 do for y=-0.75,0.75,0.5 do
+		if math.abs(x)==0.75 or math.abs(y)==0.75 then
+			local p = entity.surface.create_entity{
+				name="compact-combinator-io", position= {x=position.x+x , y=position.y+y}, force=entity.force
+			}
+			p.destructible = false
+			p.minable = false
+			p.operable = false
+			p.disconnect_neighbour()
+			table.insert(io, p)
+		end end
 	end
 	
-	-- generate surface if not existed yet
-	local surface = Surface.get()
-	
-	return {
+	local data = {
 		version = 1,
 		io = io,
 		size = 19,
 		chunkPos = Surface.newSpot(),
-		state = "chunk-gen"
 	}
+	
+	Surface.placeTiles(data.chunkPos, data.size)
+	local surface = Surface.get()
+	local start = Surface.startPos(data.chunkPos, data.size)
+	local nr=1
+	for x=0,18,6 do for y=0,18,6 do
+		if math.abs(x-9)==9 or math.abs(y-9)==9 then
+			local p = surface.create_entity{
+				name="circuit-pole", position= {start[1]+x, start[2]+y}, force=entity.force
+			}
+			p.destructible = false
+			p.minable = false
+			p.operable = false
+			p.disconnect_neighbour()
+			err(p.connect_neighbour{wire=defines.wire_type.red, target_entity=io[nr]})
+			err(p.connect_neighbour{wire=defines.wire_type.green, target_entity=io[nr]})
+			nr=nr+1
+		end
+	end end
+	return data
 end
 
 
@@ -125,19 +135,6 @@ entityMethods.tick = function(entity,data)
 	if not data then
 		err("Error occured with status-panel: "..idOfEntity(filterCombinator))
 		return 300,nil
-	end
-	
-	if data.state == "chunk-gen" then
-		if Surface.get().is_chunk_generated(data.chunkPos) then
-			Surface.placeTiles(data.chunkPos, data.size)
-			data.state = "empty"
-			info("chunk generated: "..serpent.block(data.chunkPos))
-		else
-			info("waiting for chunk gen: "..serpent.block(data.chunkPos))
-		end
-	end
-	if data.state == "empty" then
-		return 300 -- no need to update anymore
 	end
 	
 	return 10 --sleep to next update
