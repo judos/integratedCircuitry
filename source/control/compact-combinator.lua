@@ -99,7 +99,7 @@ entityMethods.build = function(entity)
 	for x=0,18,6 do for y=0,18,6 do
 		if math.abs(x-9)==9 or math.abs(y-9)==9 then
 			local p = surface.create_entity{
-				name="circuit-pole", position= {start[1]+x, start[2]+y}, force=entity.force
+				name="compact-combinator-port", position= {start[1]+x, start[2]+y}, force=entity.force
 			}
 			p.destructible = false
 			p.minable = false

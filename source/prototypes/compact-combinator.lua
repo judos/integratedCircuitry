@@ -96,7 +96,6 @@ overwriteContent(entity, {
 		shift = {0, 0}
 	},
 })
-	
 entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
 entity.minable.result = "compact-combinator-io"
@@ -109,6 +108,62 @@ overwriteContent(item, {
 	subgroup = "circuit-network",
 	order = "c[combinators]-e[compact-combinator]",
 	place_result = "compact-combinator-io",
+	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
+})
+data:extend({	item })
+
+
+
+
+-- Port inside
+local entity = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])
+overwriteContent(entity, {
+	name = "compact-combinator-port",
+	collision_box = {{-0.45, -0.45}, {0.45, 0.45}},
+  selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+	order="a",
+	track_coverage_during_build_by_moving = false,
+	supply_area_distance = 0,
+	flags = {
+		"placeable-player",
+		"placeable-enemy",
+		"player-creation",
+		--"placeable-off-grid",
+		--"not-on-map"
+	},
+	connection_points = {
+		{
+			shadow = {
+				red = {0, 0.1},
+				green = {0.05, 0.15},
+			},
+			wire = {
+				red = {0, 0},
+				green = {0.05, 0.05},
+			}
+		}
+	},
+	pictures = {
+		filename = "__integratedCircuitry__/graphics/entity/compact-combinator-port.png",
+		priority = "extra-high",
+		width = 52,
+		height = 40,
+		direction_count = 1,
+		shift = {0, 0}
+	},
+})
+entity.circuit_connector_sprites = nil
+entity.fast_replaceable_group = nil
+entity.minable.result = nil
+data:extend({	entity })
+
+-- Item for Port inside (copying for blueprint)
+local item = table.deepcopy(data.raw["item"]["iron-chest"])
+overwriteContent(item, {
+	name = "compact-combinator-port",
+	subgroup = "circuit-network",
+	order = "c[combinators]-e[compact-combinator]",
+	place_result = "compact-combinator-port",
 	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
 })
 data:extend({	item })
