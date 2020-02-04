@@ -59,7 +59,7 @@ addTechnologyUnlocksRecipe("circuit-network","compact-combinator")
 
 
 
--- Port
+-- Port outside (no graphics)
 local entity = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])
 overwriteContent(entity, {
 	name = "compact-combinator-io",
@@ -102,7 +102,7 @@ entity.fast_replaceable_group = nil
 entity.minable.result = "compact-combinator-io"
 data:extend({	entity })
 
--- Item
+-- Item for Port outside (copying for blueprint)
 local item = table.deepcopy(data.raw["item"]["iron-chest"])
 overwriteContent(item, {
 	name = "compact-combinator-io",
@@ -112,3 +112,56 @@ overwriteContent(item, {
 	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
 })
 data:extend({	item })
+
+
+
+
+-- Big pole for connecting cables outside with inside
+local removeKey = "__REMOVE__"
+local entity = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])
+overwriteContent(entity, {
+	name = "compact-combinator-connection",
+	collision_box = removeKey, -- {{0, 0}, {0, 0}},
+  selection_box = removeKey, --{{-0.25, -0.25}, {0.25, 0.25}},
+	order="a",
+	track_coverage_during_build_by_moving = false,
+	supply_area_distance = 0,
+	maximum_wire_distance = 64,
+	flags = {
+		"placeable-player",
+		"placeable-enemy",
+		"player-creation",
+		"placeable-off-grid",
+		"not-on-map",
+		"not-blueprintable",
+		"hide-alt-info",
+		"not-deconstructable",
+		"not-upgradable",
+		"hidden",
+		"not-rotatable"
+	},
+	connection_points = {
+		{
+			shadow = {
+				red = {0, 0.1},
+				green = {0.05, 0.15},
+			},
+			wire = {
+				red = {0, 0},
+				green = {0.05, 0.05},
+			}
+		}
+	},
+	pictures = {
+		filename = "__integratedCircuitry__/graphics/empty4x1.png",
+		priority = "extra-high",
+		width = 1,
+		height = 1,
+		direction_count = 1,
+		shift = {0, 0}
+	},
+}, removeKey)
+entity.circuit_connector_sprites = nil
+entity.fast_replaceable_group = nil
+entity.minable.result = nil
+data:extend({	entity })
