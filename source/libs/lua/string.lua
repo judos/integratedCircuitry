@@ -4,11 +4,6 @@ function string.startsWith(str,prefix)
 	return string.sub(str,1,string.len(prefix))==prefix
 end
 
--- TODO: Remove in new version (Deprecate)
-function string.starts(str,prefix)
-  return string.startsWith(str,prefix)
-end
-
 function string.ends(str,suffix)
    return suffix=='' or string.sub(str,-string.len(suffix))==suffix
 end

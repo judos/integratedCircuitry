@@ -64,9 +64,11 @@ end)
 ---------------------------------------------------
 script.on_event(defines.events.on_built_entity, function(event)
 	entities_build(event)
+	build_electric_pole(event.created_entity) -- disconnect power cables to io-ports only meant for circuit cables
 end)
 script.on_event(defines.events.on_robot_built_entity, function(event)
 	entities_build(event)
+	build_electric_pole(event.created_entity) -- disconnect power cables to io-ports only meant for circuit cables
 end)
 
 ---------------------------------------------------

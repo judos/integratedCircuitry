@@ -1,13 +1,13 @@
 TODO 4.0:
 	move lua/various.round to lua/numbers
-  remove lua/string> string.starts
-  MIGRATION
-  	instead of string.starts use string.startsWith
+  
 
 4.0 integratedCircuitry
 	gui: events without open gui: string part is used as entityName to send event to correct codepart gui:70
+	remove lua/string> string.starts
 	MIGRATION:
 		removed deepcopy, use table.deepcopy from 'require "util"' instead
+		instead of string.starts use string.startsWith
 
 
 3.9 beltSorter

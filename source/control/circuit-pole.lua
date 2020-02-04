@@ -1,15 +1,14 @@
 local math2d = require("math2d")
-
+require "libs.lua.string"
 
 -- Registering entity into system
 local circuitPole = {}
-local mediumPole = {}
 entities["circuit-pole"] = circuitPole
-entities["medium-electric-pole"] = mediumPole
-entities["small-electric-pole"] = mediumPole
 
-function mediumPole.build(entity)
-	
+function build_electric_pole(entity)
+	if entity.type ~= "electric-pole" then
+		return
+	end
 	-- diconnect all circuit poles and measure distance to poles
 	local d={}
 	for k,e in pairs(entity.neighbours.copper) do
@@ -24,7 +23,7 @@ function mediumPole.build(entity)
 	
 	for _,arr in pairs(d) do
 		local e = arr.entity
-		if e.name ~= "circuit-pole" then
+		if e.name ~= "circuit-pole" and not string.startsWith(e.name, "compact-combinator") then
 			entity.connect_neighbour(e)
 			if # entity.neighbours.copper >= 2 then
 				break
