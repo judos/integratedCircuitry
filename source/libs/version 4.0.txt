@@ -5,7 +5,9 @@ TODO 4.0:
   	instead of string.starts use string.startsWith
 
 4.0 integratedCircuitry
-	removed deepcopy, use table.deepcopy from 'require "util"' instead
+	gui: events without open gui: string part is used as entityName to send event to correct codepart gui:70
+	MIGRATION:
+		removed deepcopy, use table.deepcopy from 'require "util"' instead
 
 
 3.9 beltSorter

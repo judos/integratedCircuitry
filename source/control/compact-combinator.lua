@@ -6,8 +6,19 @@ entities["compact-combinator"] = entityMethods
 local guiMethods = {}
 gui["compact-combinator"] = guiMethods
 
+local private = {} -- private methods
+
 -- Constants
-local m = {} --private methods
+
+
+-- global data used:
+-- integratedCircuitry.cc = {
+--		players[$playerName] = {
+--			position = $position,		Position before teleporting into a compact-combinator
+--			surface = $surface			Position before teleporting into a compact-combinator
+--		}
+--	}
+
 
 ---------------------------------------------------
 -- entityData
@@ -27,14 +38,20 @@ local m = {} --private methods
 -- }
 
 --------------------------------------------------
--- Gui testing
+-- GUI
 --------------------------------------------------
-local teleportBackButtonName = "integratedCircuitry.compact-combinator-back"
+local teleportBackButtonName = "integratedCircuitry.compact-combinator.back"
 
 guiMethods.open = function(player, entity)
 	local data = global.entityData[idOfEntity(entity)]
+	player.minimap_enabled=false
+	
+	local pdata = private.playerData(player.name)
+	pdata.position = player.position
+	pdata.surface = player.surface
+	
 	player.teleport({data.chunkPos[1]*32+16,data.chunkPos[2]*32+16},Surface.get())
-	player.gui.left.add{type="button",name=teleportBackButtonName,caption="Teleport back"}
+	player.gui.left.add{type="button",name=teleportBackButtonName,caption="Leave the compact combinator"}
 end
 
 guiMethods.close = function(player)
@@ -43,8 +60,10 @@ end
 
 guiMethods.click = function(nameArr, player, entity)
 	local button = table.remove(nameArr,1)
-	if button == teleportBackButtonName then
-		player.teleport({0,0},game.surfaces["nauvis"])
+	if button == "back" then
+		-- Note: entity is nil here because there is no open UI
+		local pdata = private.playerData(player.name)
+		player.teleport(pdata.position,pdata.surface)
 		player.gui.left[teleportBackButtonName].destroy()
 	end
 end
@@ -79,7 +98,7 @@ entityMethods.build = function(entity)
 	return {
 		version = 1,
 		io = io,
-		size = 20,
+		size = 19,
 		chunkPos = Surface.newSpot(),
 		state = "chunk-gen"
 	}
@@ -125,5 +144,24 @@ entityMethods.tick = function(entity,data)
 	return 10 --sleep to next update
 end
 
+---------------------------------------------------
+-- Private methods
+---------------------------------------------------
+
+private.data = function()
+	local data = global.integratedCircuitry
+	if not data.cc then
+		data.cc = { players={} }
+	end
+	return data.cc
+end
+
+private.playerData = function(playerName)
+	local players = private.data().players
+	if not players[playerName] then
+		players[playerName] = {}
+	end
+	return players[playerName]
+end
 
 

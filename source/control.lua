@@ -14,6 +14,8 @@ require "control.compact-combinator"
 -- integratedCircuitry.version = $version
 -- integratedCircuitry.surface:
 --    See compact-combinator-surface.lua
+-- integratedCircuitry.cc:
+--    See compact-combinator.lua
 
 ---------------------------------------------------
 -- Init

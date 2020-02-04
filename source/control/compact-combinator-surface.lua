@@ -6,7 +6,8 @@
 --		next_chunk = {x,y},			ChunkPosition
 --		empty_chunks = {
 --			{x,y}, ...						ChunkPosition
---		}
+--		},
+--		width = width						number specifying how far it goes
 --	}
 
 
@@ -20,24 +21,23 @@ function Surface.newSpot()
 	if not data.surface then 
 		data.surface = {
 			next_chunk = {0,0},
-			start_chunk = {0,0},
-			empty_chunks = {}
+			empty_chunks = {},
+			width = 50
 		}
 	end
 	data = data.surface
 	
+	-- If a spot got free use this instead of allocating new spot
 	if #data.empty_chunks > 0 then
 		return table.remove(data.empty_chunks)
 	end
 	
 	local result = data.next_chunk
-	local nextX = result[1] + 1
-	local nextY = result[2]
-	if nextX == data.start_chunk[1] + 100 then
-		nextX = data.start_chunk[1]
-		nextY = nextY + 1
+	local nextChunk = { result[1] + 1, result[2] }
+	if nextChunk[1] >= data.width then
+		nextChunk = { 0, nextChunk[2] + 1 }
 	end
-	data.next_chunk = { nextX, nextY }
+	data.next_chunk = nextChunk
 	
 	Surface.get().request_to_generate_chunks({result[1],result[2]}, 0)
 	info("requested chunk-gen of "..serpent.block(result))
@@ -54,19 +54,6 @@ function Surface.placeTiles(chunkPosition)
 	Surface.get().set_tiles(tiles)
 end
 
-function Surface.buildBlueprint(chunkPosition,item,force)
-	local pos = {chunkPosition[1]*32, chunkPosition[2]*32}
-	item.build_blueprint{
-		surface=Surface.get(),
-		force=force,
-		position={pos[1]+16,pos[2]+16},
-		force_build=true
-	}
-	local entities = Surface.get().find_entities({{pos[1],pos[2]},{pos[1]+32,pos[2]+32}})
-	for _,x in pairs(entities) do
-		x.revive()
-	end
-end
 
 function Surface.freeSpot(chunkPosition)
 	Surface.removeEntities(chunkPosition)
