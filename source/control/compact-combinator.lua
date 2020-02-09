@@ -94,7 +94,7 @@ entityMethods.build = function(entity)
 	Surface.placeTiles(data.chunkPos, data.size)
 	local surface = Surface.get()
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
-	for x=-3,3,2 do for y=-3,3,2 do
+	for y=-3,3,2 do for x=-3,3,2 do
 		if math.abs(x)==3 or math.abs(y)==3 then
 			local p = entity.surface.create_entity{
 				name="compact-combinator-io", position= {x=position.x+x*0.25 , y=position.y+y*0.25}, force=entity.force

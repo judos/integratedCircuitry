@@ -9,6 +9,7 @@ require "control.status-panel"
 require "control.circuit-pole"
 require "control.compact-combinator"
 require "control.compact-combinator-allowedBuildings"
+require "control.compact-combinator-ghost"
 
 
 -- global data used:

@@ -1,10 +1,9 @@
 
 TODO IntegratedCircuitry:
 
-- Copy & paste with blueprint
-- Placing ghost compact-combinator revives all ports immediately (because ghosts-ports can be removed)
 - Removing ghost removes all ports
 - what happens if something is built on ghost of compact-combinator
+- Copy & paste with blueprint
 - allow other mods to place notes/text/hints
 
 
