@@ -1,9 +1,8 @@
 
 TODO IntegratedCircuitry:
 
-- Power inside compact combinator
-- Copy & paste with blueprint
 - Only certain buildings can be built inside compact combinator
+- Copy & paste with blueprint
 - Placing ghost compact-combinator revives all ports immediately
 - Removing ghost removes all ports
 

@@ -64,6 +64,7 @@ guiMethods.click = function(nameArr, player, entity)
 		local pdata = private.playerData(player.name)
 		player.teleport(pdata.position,pdata.surface)
 		player.gui.left[teleportBackButtonName].destroy()
+		player.minimap_enabled=true
 	end
 end
 
@@ -88,11 +89,7 @@ entityMethods.build = function(entity)
 		return nil
 	end
 	info("pos: "..position.x..", "..position.y.." chunkPos: "..data.chunkPos[1]..", "..data.chunkPos[2])
-	local cir = entity.get_or_create_control_behavior()
-	cir.set_signal(1, {signal={type="virtual", name="signal-X"}, count=data.chunkPos[1]})
-	cir.set_signal(2, {signal={type="virtual", name="signal-Y"}, count=data.chunkPos[2]})
-	cir.set_signal(3, {signal={type="virtual", name="signal-S"}, count=data.size})
-	cir.set_signal(4, {signal={type="virtual", name="signal-V"}, count=data.version})
+	private.writeDataToCombinator(data, entity)
 	
 	Surface.placeTiles(data.chunkPos, data.size)
 	local surface = Surface.get()
@@ -160,6 +157,11 @@ entityMethods.copy = function(source,srcData,target,targetData)
 	
 end
 
+entityMethods.copyTo = function(source,srcData,target,targetData)
+	-- don't allow overwriting signals of compact-combinator
+	private.writeDataToCombinator(targetData, target)
+end
+
 ---------------------------------------------------
 -- update tick
 ---------------------------------------------------
@@ -176,6 +178,14 @@ end
 ---------------------------------------------------
 -- Private methods
 ---------------------------------------------------
+
+private.writeDataToCombinator = function(data, entity)
+	local cir = entity.get_or_create_control_behavior()
+	cir.set_signal(1, {signal={type="virtual", name="signal-X"}, count=data.chunkPos[1]})
+	cir.set_signal(2, {signal={type="virtual", name="signal-Y"}, count=data.chunkPos[2]})
+	cir.set_signal(3, {signal={type="virtual", name="signal-S"}, count=data.size})
+	cir.set_signal(4, {signal={type="virtual", name="signal-V"}, count=data.version})
+end
 
 private.data = function()
 	local data = global.integratedCircuitry

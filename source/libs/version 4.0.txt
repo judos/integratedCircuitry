@@ -5,6 +5,7 @@ TODO 4.0:
 4.0 integratedCircuitry
 	gui: events without open gui: string part is used as entityName to send event to correct codepart gui:70
 	remove lua/string> string.starts
+	entities: added copyTo event
 	MIGRATION:
 		removed deepcopy, use table.deepcopy from 'require "util"' instead
 		instead of string.starts use string.startsWith

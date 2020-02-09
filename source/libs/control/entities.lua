@@ -37,7 +37,10 @@ require "libs.logging"
 			called when an entity is rotated by the player
 				
 		copy = function(source,srcData,target,targetData)
-			coppy settings when shift+rightclick -> shift+leftclick
+			coppy settings when shift+rightclick -> shift+leftclick (called on the source entity)
+		
+		copyTo = function(source,srcData,target,targetData)
+			coppy settings when shift+rightclick -> shift+leftclick (called on the target entity)
 			
 		move = function(entity,data,player,start_pos)
 			Called when pickerDolly moves an entity. The method should do the
@@ -140,12 +143,18 @@ end
 function entities_settings_pasted(event)
 	local source = event.source
 	local target = event.destination
-	local name = source.name
-	if entities[name] ~= nil then
-		if entities[name].copy ~= nil then
+	if entities[source.name] ~= nil then
+		if entities[source.name].copy ~= nil then
 			local srcData = global.entityData[idOfEntity(source)]
 			local targetData = global.entityData[idOfEntity(target)]
-			entities[name].copy(source,srcData,target,targetData)
+			entities[source.name].copy(source,srcData,target,targetData)
+		end
+	end
+	if entities[target.name] ~= nil then
+		if entities[target.name].copyTo ~= nil then
+			local srcData = global.entityData[idOfEntity(source)]
+			local targetData = global.entityData[idOfEntity(target)]
+			entities[target.name].copyTo(source,srcData,target,targetData)
 		end
 	end
 end
