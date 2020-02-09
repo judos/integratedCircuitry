@@ -1,2 +1,21 @@
 
+TODO IntegratedCircuitry:
+
+- Power inside compact combinator
+- Copy & paste with blueprint
+- Only certain buildings can be built inside compact combinator
+- Placing ghost compact-combinator revives all ports immediately
+- Removing ghost removes all ports
+
+
+
+- Less restrictions on which chunk to use with more pole length (place more poles)
+- No concrete floor but land which can't be mined
+
+
+
+
+
+
+
 Status panel should copy settings in blueprint

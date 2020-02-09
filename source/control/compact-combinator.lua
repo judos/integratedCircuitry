@@ -30,6 +30,8 @@ local private = {} -- private methods
 --		io = { [1-12] = entity } circuit-pole which is used as input/output
 --		poles = { [1-24] = entity } big poles to connect all cables
 --		ports = { [1-12] = entity } circuit-pole used as port internally
+--		power = entity,
+--		substation = entity,
 --		size = size of the compact combinator
 --    chunkPos = position of the center of the blueprint
 -- }
@@ -129,6 +131,17 @@ entityMethods.build = function(entity)
 			table.insert(data.ports, port)
 		end end
 	end
+	data.power = surface.create_entity{
+		name="electric-energy-interface", position={chunkMiddle[1], chunkMiddle[2]+data.size/2+2}, force=entity.force
+	}
+	data.power.electric_buffer_size = 166667
+	data.power.power_production = 166667
+	private.indestructible(data.power)
+	data.substation = surface.create_entity{
+		name="compact-combinator-substation", position=chunkMiddle, force=entity.force
+	}
+	data.substation.disconnect_neighbour()
+	private.indestructible(data.substation)
 	
 	return data
 end

@@ -33,7 +33,7 @@ overwriteContent(entity, {
 	collision_box = {{-0.95, -0.95}, {0.95, 0.95}},
   selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	inventory_size = 0,
-	picture = {
+	sprites = {
 		filename = "__integratedCircuitry__/graphics/entity/compact-combinator.png",
 		priority = "extra-high",
 		width = 120,
@@ -68,6 +68,7 @@ overwriteContent(entity, {
 	order="a",
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,
+	draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",
@@ -198,18 +199,6 @@ overwriteContent(entity, {
 		"hidden",
 		"not-rotatable"
 	},
-	connection_points = {
-		{
-			shadow = {
-				red = {0, 0.1},
-				green = {0.05, 0.15},
-			},
-			wire = {
-				red = {0, 0},
-				green = {0.05, 0.05},
-			}
-		}
-	},
 	pictures = {
 		filename = "__integratedCircuitry__/graphics/empty4x1.png",
 		priority = "extra-high",
@@ -217,6 +206,12 @@ overwriteContent(entity, {
 		height = 1,
 		direction_count = 1,
 		shift = {0, 0}
+	},
+	connection_points = {
+		{
+			shadow = { red = {0, 0.1}, green = {0.05, 0.15} },
+			wire = { red = {0, 0}, green = {0.05, 0.05} }
+		}
 	},
 }, removeKey)
 entity.circuit_connector_sprites = nil
