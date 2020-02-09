@@ -28,7 +28,15 @@ end
 
 
 entityMethods.remove = function(data)
+	-- Note only compact-combinator ghost is ticked here!
 	local pos = data.pos
+	local combinator = data.surface.find_entity("compact-combinator", pos)
+	if combinator ~= nil then
+		-- do nothing if ghost was revived
+		return
+	end
+	
+	-- otherwise remove io ports because ghost is also removed
 	local ports = data.surface.find_entities_filtered{
 		area={{pos.x-1,pos.y-1},{pos.x+1,pos.y+1}}, 
 		name="compact-combinator-io",

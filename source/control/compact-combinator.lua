@@ -88,7 +88,9 @@ entityMethods.build = function(entity)
 		entity.destroy()
 		return nil
 	end
-	info("pos: "..position.x..", "..position.y.." chunkPos: "..data.chunkPos[1]..", "..data.chunkPos[2])
+	
+	
+	
 	private.writeDataToCombinator(data, entity)
 	
 	Surface.placeTiles(data.chunkPos, data.size)
@@ -96,9 +98,12 @@ entityMethods.build = function(entity)
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
 	for y=-3,3,2 do for x=-3,3,2 do
 		if math.abs(x)==3 or math.abs(y)==3 then
-			local p = entity.surface.create_entity{
-				name="compact-combinator-io", position= {x=position.x+x*0.25 , y=position.y+y*0.25}, force=entity.force
-			}
+			local p = entity.surface.find_entity("compact-combinator-io",{x=position.x+x*0.25 , y=position.y+y*0.25})
+			if p == nil then
+				p = entity.surface.create_entity{
+					name="compact-combinator-io", position= {x=position.x+x*0.25 , y=position.y+y*0.25}, force=entity.force
+				}
+			end
 			private.indestructible(p)
 			p.disconnect_neighbour()
 			table.insert(data.io, p)
