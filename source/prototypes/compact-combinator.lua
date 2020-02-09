@@ -68,7 +68,7 @@ overwriteContent(entity, {
 	order="a",
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,
-	draw_copper_wires = false,
+	--draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",
@@ -126,6 +126,7 @@ overwriteContent(entity, {
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,
 	maximum_wire_distance = 15,
+	draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",
@@ -185,7 +186,7 @@ overwriteContent(entity, {
 	supply_area_distance = 0,
 	maximum_wire_distance = 64,
 	draw_circuit_wires = false,
-	--draw_copper_wires = false,
+	draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",

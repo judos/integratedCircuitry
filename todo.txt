@@ -1,7 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- what happens if something is built on ghost of compact-combinator
 - Copy & paste with blueprint
 - allow other mods to place notes/text/hints
 

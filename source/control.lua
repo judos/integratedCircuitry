@@ -72,7 +72,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 	circuitPole_build_electric_pole(event.created_entity) 
 end)
 script.on_event(defines.events.on_robot_built_entity, function(event)
-	local player = game.players[event.player_index]
+	local player = nil
 	entities_build(event)
 	compactCombinator_checkSurfaceBuildings(event.created_entity, player)
 	-- disconnect power cables to io-ports only meant for circuit cables
