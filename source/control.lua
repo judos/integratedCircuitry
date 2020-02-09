@@ -8,6 +8,7 @@ require "control.status-panel"
 --require "control.filter-combinator"
 require "control.circuit-pole"
 require "control.compact-combinator"
+require "control.compact-combinator-allowedBuildings"
 
 
 -- global data used:
@@ -63,12 +64,18 @@ end)
 -- Building Entities
 ---------------------------------------------------
 script.on_event(defines.events.on_built_entity, function(event)
+	local player = game.players[event.player_index]
 	entities_build(event)
-	build_electric_pole(event.created_entity) -- disconnect power cables to io-ports only meant for circuit cables
+	compactCombinator_checkSurfaceBuildings(event.created_entity, player)
+	-- disconnect power cables to io-ports only meant for circuit cables
+	circuitPole_build_electric_pole(event.created_entity) 
 end)
 script.on_event(defines.events.on_robot_built_entity, function(event)
+	local player = game.players[event.player_index]
 	entities_build(event)
-	build_electric_pole(event.created_entity) -- disconnect power cables to io-ports only meant for circuit cables
+	compactCombinator_checkSurfaceBuildings(event.created_entity, player)
+	-- disconnect power cables to io-ports only meant for circuit cables
+	circuitPole_build_electric_pole(event.created_entity) 
 end)
 
 ---------------------------------------------------

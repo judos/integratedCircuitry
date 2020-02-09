@@ -5,7 +5,7 @@ require "libs.lua.string"
 local circuitPole = {}
 entities["circuit-pole"] = circuitPole
 
-function build_electric_pole(entity)
+function circuitPole_build_electric_pole(entity)
 	if not entity.valid or entity.type ~= "electric-pole" then
 		return
 	end

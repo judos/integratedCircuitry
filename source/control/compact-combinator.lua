@@ -150,6 +150,11 @@ entityMethods.remove = function(data)
 			e.destroy()
 		end
 	end
+	if data.poles then
+		for k,e in pairs(data.poles) do
+			e.destroy()
+		end
+	end
 	Surface.freeSpot(data.chunkPos) --removes all entities inside
 end
 

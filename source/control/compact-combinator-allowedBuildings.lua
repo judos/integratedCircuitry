@@ -1,0 +1,26 @@
+local Surface = require("control.compact-combinator-surface")
+
+
+function compactCombinator_checkSurfaceBuildings(entity, player)
+	if not entity.valid or entity.surface.name ~= Surface.name then
+		return
+	end
+	
+	local t = entity.type
+	local n = entity.name
+	if n~="compact-combinator" then
+		if n=="circuit-pole" then
+			return
+		end
+		if t=="constant-combinator" or t=="decider-combinator" or t=="arithmetic-combinator" then
+			return
+		end
+	end
+	
+	entity.surface.create_entity{name="tutorial-flying-text", text="You can only place combinators here!", position=entity.position}
+	if t=="electric-pole" then
+		entity.disconnect_neighbour()
+	end
+	player.mine_entity(entity)
+	
+end

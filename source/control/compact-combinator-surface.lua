@@ -74,12 +74,12 @@ function Surface.removeEntities(chunkPosition)
 	end
 end
 
+Surface.name = "compact-circuits"
 function Surface.get()
-	local surfaceName = "compact-circuits"
-	local surface = game.surfaces[surfaceName]
+	local surface = game.surfaces[Surface.name]
 	if surface~=nil then return surface end
-	game.create_surface(surfaceName,{width=1,height=1,peaceful_mode=true})
-	surface = game.surfaces[surfaceName]
+	game.create_surface(Surface.name,{width=1,height=1,peaceful_mode=true})
+	surface = game.surfaces[Surface.name]
 	surface.always_day = true
 	surface.wind_speed = 0
 	surface.request_to_generate_chunks({0,0}, 1)
@@ -88,7 +88,7 @@ function Surface.get()
 	local tiles = {}
 	table.insert(tiles, {name="out-of-map",position={0,0}})
 	surface.set_tiles(tiles)
-	return game.surfaces[surfaceName]
+	return game.surfaces[Surface.name]
 end
 
 function private.data()
