@@ -14,12 +14,18 @@ entityMethods.build = function(entity)
 		return
 	end
 	if entity.ghost_name == "compact-combinator" then
+		scheduleAdd(entity,TICK_SOON) -- tick to get notified if it doesn't exist anymore
 		return {
 			pos = entity.position,
 			surface = entity.surface
 		}
 	end
 end
+
+entityMethods.tick = function(entity,data)
+	return 30,nil -- next tick, reason
+end
+
 
 entityMethods.remove = function(data)
 	local pos = data.pos

@@ -91,7 +91,7 @@ script.on_event(defines.events.on_pre_player_mined_item, function(event)
 end)
 
 ---------------------------------------------------
--- Removing entities
+-- Settings / Deconstruction
 ---------------------------------------------------
 
 script.on_event(defines.events.on_entity_settings_pasted, function(event)
