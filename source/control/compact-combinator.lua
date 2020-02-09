@@ -27,8 +27,10 @@ local private = {} -- private methods
 -- Used data:
 -- {
 --		version = 1 (in the current version)
---		io = {[1]=... [12]=...} constant-combinator which is used as input/output
---		size = size of the blueprint used
+--		io = { [1-12] = entity } circuit-pole which is used as input/output
+--		poles = { [1-24] = entity } big poles to connect all cables
+--		ports = { [1-12] = entity } circuit-pole used as port internally
+--		size = size of the compact combinator
 --    chunkPos = position of the center of the blueprint
 -- }
 
@@ -70,46 +72,64 @@ end
 entityMethods.build = function(entity)
 	--scheduleAdd(entity, TICK_ASAP)
 	local position = entity.position
-	
-	local io = {}
-	for x=-0.75,0.75,0.5 do for y=-0.75,0.75,0.5 do
-		if math.abs(x)==0.75 or math.abs(y)==0.75 then
-			local p = entity.surface.create_entity{
-				name="compact-combinator-io", position= {x=position.x+x , y=position.y+y}, force=entity.force
-			}
-			p.destructible = false
-			p.minable = false
-			p.operable = false
-			p.disconnect_neighbour()
-			table.insert(io, p)
-		end end
-	end
-	
 	local data = {
 		version = 1,
-		io = io,
+		io = {},
+		poles = {},
+		ports = {},
 		size = 19,
-		chunkPos = Surface.newSpot(),
+		chunkPos = Surface.newSpot(position.x, position.y),
 	}
+	if data.chunkPos == nil then
+		err("Could not find free spot")
+		entity.destroy()
+		return nil
+	end
+	info("pos: "..position.x..", "..position.y.." chunkPos: "..data.chunkPos[1]..", "..data.chunkPos[2])
+	local cir = entity.get_or_create_control_behavior()
+	cir.set_signal(1, {signal={type="virtual", name="signal-X"}, count=data.chunkPos[1]})
+	cir.set_signal(2, {signal={type="virtual", name="signal-Y"}, count=data.chunkPos[2]})
+	cir.set_signal(3, {signal={type="virtual", name="signal-S"}, count=data.size})
+	cir.set_signal(4, {signal={type="virtual", name="signal-V"}, count=data.version})
 	
 	Surface.placeTiles(data.chunkPos, data.size)
 	local surface = Surface.get()
-	local start = Surface.startPos(data.chunkPos, data.size)
-	local nr=1
-	for x=0,18,6 do for y=0,18,6 do
-		if math.abs(x-9)==9 or math.abs(y-9)==9 then
-			local p = surface.create_entity{
-				name="compact-combinator-port", position= {start[1]+x, start[2]+y}, force=entity.force
+	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
+	for x=-3,3,2 do for y=-3,3,2 do
+		if math.abs(x)==3 or math.abs(y)==3 then
+			local p = entity.surface.create_entity{
+				name="compact-combinator-io", position= {x=position.x+x*0.25 , y=position.y+y*0.25}, force=entity.force
 			}
-			p.destructible = false
-			p.minable = false
-			p.operable = false
+			private.indestructible(p)
 			p.disconnect_neighbour()
-			err(p.connect_neighbour{wire=defines.wire_type.red, target_entity=io[nr]})
-			err(p.connect_neighbour{wire=defines.wire_type.green, target_entity=io[nr]})
-			nr=nr+1
-		end
-	end end
+			table.insert(data.io, p)
+			
+			local pole1 = surface.create_entity{
+				name="compact-combinator-connection", position=position, force=entity.force
+			}
+			private.indestructible(pole1)
+			pole1.disconnect_neighbour()
+			private.connectWires(p, pole1)
+			table.insert(data.poles, pole1)
+			
+			local pole2 = surface.create_entity{
+				name="compact-combinator-connection", position=chunkMiddle, force=entity.force
+			}
+			private.indestructible(pole2)
+			pole2.disconnect_neighbour()
+			private.connectWires(pole1, pole2)
+			table.insert(data.poles, pole2)
+			
+			local port = surface.create_entity{
+				name="compact-combinator-port", position= {chunkMiddle[1]+x*3, chunkMiddle[2]+y*3}, force=entity.force
+			}
+			private.indestructible(port)
+			port.disconnect_neighbour()
+			private.connectWires(pole2, port)
+			table.insert(data.ports, port)
+		end end
+	end
+	
 	return data
 end
 
@@ -120,7 +140,7 @@ entityMethods.remove = function(data)
 			e.destroy()
 		end
 	end
-	Surface.freeSpot(data.chunkPos)
+	Surface.freeSpot(data.chunkPos) --removes all entities inside
 end
 
 entityMethods.copy = function(source,srcData,target,targetData)
@@ -137,7 +157,7 @@ entityMethods.tick = function(entity,data)
 		return 300,nil
 	end
 	
-	return 10 --sleep to next update
+	return 60 --sleep to next update
 end
 
 ---------------------------------------------------
@@ -160,4 +180,16 @@ private.playerData = function(playerName)
 	return players[playerName]
 end
 
+private.indestructible = function(entity)
+	entity.destructible = false
+	entity.minable = false
+	entity.operable = false
+end
 
+private.connectWires = function(entity, entity2)
+	local b = entity.connect_neighbour{wire=defines.wire_type.red, target_entity=entity2}
+	local b2 = entity.connect_neighbour{wire=defines.wire_type.green, target_entity=entity2}
+	if not b or not b2 then
+		err("Could not connect Cable!")
+	end
+end
