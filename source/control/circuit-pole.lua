@@ -6,7 +6,7 @@ local circuitPole = {}
 entities["circuit-pole"] = circuitPole
 
 function build_electric_pole(entity)
-	if entity.type ~= "electric-pole" then
+	if not entity.valid or entity.type ~= "electric-pole" then
 		return
 	end
 	-- diconnect all circuit poles and measure distance to poles
