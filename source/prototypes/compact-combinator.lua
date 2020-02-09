@@ -27,10 +27,10 @@ data:extend({
 
 
 -- Entity
-local entity = table.deepcopy(data.raw["container"]["iron-chest"])
+local entity = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
 overwriteContent(entity, {
 	name = "compact-combinator",
-	collision_box = {{-0.45, -0.45}, {0.45, 0.45}},
+	collision_box = {{-0.95, -0.95}, {0.95, 0.95}},
   selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	inventory_size = 0,
 	picture = {
@@ -124,6 +124,7 @@ overwriteContent(entity, {
 	order="a",
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,
+	maximum_wire_distance = 15,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",
@@ -182,6 +183,8 @@ overwriteContent(entity, {
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,
 	maximum_wire_distance = 64,
+	draw_circuit_wires = false,
+	--draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",

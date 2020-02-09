@@ -3,11 +3,9 @@
 
 -- global data used:
 -- integratedCircuitry.surface = {
---		next_chunk = {x,y},				ChunkPosition
---		empty_chunks = {
---			{x,y}, ...							ChunkPosition
---		},
---		width = width							number specifying how far it goes
+--		chunks = {
+--			[x][y] = bool    -- true if chunk is used
+--		}
 --	}
 
 
@@ -15,29 +13,30 @@ local Surface = {} -- exported interface
 local private = {} -- private methods
 
 -- returns the coordinates of a new chunk to be used for a compact-combinator
-function Surface.newSpot()
+function Surface.newSpot(x, y)
 	local data = private.data()
 	
-	-- If a spot got free use this instead of allocating new spot
-	if #data.empty_chunks > 0 then
-		return table.remove(data.empty_chunks)
+	local c = { math.floor(x/32), math.floor(y/32) }
+	if not private.isChunkUsed(c) then
+		private.markChunk(c, true)
+		return c
 	end
 	
-	local result = data.next_chunk
-	local nextChunk = { result[1] + 1, result[2] }
-	if nextChunk[1] >= data.width then
-		nextChunk = { 0, nextChunk[2] + 1 }
-	end
-	data.next_chunk = nextChunk
-	
-	--Surface.get().request_to_generate_chunks({result[1]*32,result[2]*32}, 1)
-	--info("requested chunk-gen of "..serpent.block(result))
-	return result
+	for x=-1,1 do for y=-1,1 do
+		if math.abs(x)+math.abs(y) == 1 then
+			local c2 = {c[1]+x, c[2]+y}
+			if not private.isChunkUsed(c2) then
+				private.markChunk(c2, true)
+				return c2
+			end
+		end
+	end end
+	return nil -- could not find a free chunk nearby
 end
 
 function Surface.placeTiles(chunkPosition, size)
 	local tiles = {}
-	local start = 16 - math.floor((size-1)/2)
+	local start = 16 - math.ceil((size-1)/2)
 	local to = start + (size-1)
 	for dx=start,to do for dy=start,to do
 		local x = chunkPosition[1] * 32 + dx
@@ -47,15 +46,24 @@ function Surface.placeTiles(chunkPosition, size)
 	Surface.get().set_tiles(tiles)
 end
 
-function Surface.startPos(chunkPosition, size)
-	local start = 16 - math.floor((size-1)/2)
-	return {chunkPosition[1] * 32 + start, chunkPosition[2] * 32 + start}
+function Surface.chunkMiddle(chunkPos)
+	return {chunkPos[1] * 32 + 16, chunkPos[2] * 32 + 16}
 end
 
 
 function Surface.freeSpot(chunkPosition)
 	Surface.removeEntities(chunkPosition)
-	table.insert(private.data().empty_chunks,chunkPosition)
+	local size = 32
+	local tiles = {}
+	local start = 16 - math.ceil((size-1)/2)
+	local to = start + (size-1)
+	for dx=start,to do for dy=start,to do
+		local x = chunkPosition[1] * 32 + dx
+		local y = chunkPosition[2] * 32 + dy
+		table.insert(tiles, {name="out-of-map",position={x,y}})
+	end end
+	Surface.get().set_tiles(tiles)
+	private.markChunk(chunkPosition, false)
 end
 
 function Surface.removeEntities(chunkPosition)
@@ -87,14 +95,27 @@ function private.data()
 	local d = global.integratedCircuitry
 	if not d.surface then
 		d.surface = {
-			next_chunk = {0,0},
-			empty_chunks = {},
-			width = 50
+			chunks = {}
 		}
 	end
 	return d.surface
 end
 
+function private.isChunkUsed(chunk)
+	local x = chunk[1]
+	local y = chunk[2]
+	local data = private.data().chunks
+	--info("check chunk used: "..tostring(x)..", "..tostring(y))
+	return data[x] and data[x][y]
+end
 
+function private.markChunk(chunk, used)
+	local x = chunk[1]
+	local y = chunk[2]
+	local data = private.data().chunks
+	--info("mark chunk used: "..tostring(x)..", "..tostring(y)..", "..tostring(used))
+	if not data[x] then data[x] = {} end
+	data[x][y] = used
+end
 
 return Surface
