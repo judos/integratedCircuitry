@@ -11,10 +11,27 @@ entityMethods.build = function(entity)
 	if entity.ghost_name == "compact-combinator-io" then
 		local x,revivedEntity = entity.revive()
 		private.indestructible(revivedEntity)
+		return
+	end
+	if entity.ghost_name == "compact-combinator" then
+		return {
+			pos = entity.position,
+			surface = entity.surface
+		}
+	end
+end
+
+entityMethods.remove = function(data)
+	local pos = data.pos
+	local ports = data.surface.find_entities_filtered{
+		area={{pos.x-1,pos.y-1},{pos.x+1,pos.y+1}}, 
+		name="compact-combinator-io",
+	}
+	for k,v in pairs(ports) do
+		v.destroy()
 	end
 
 end
-
 
 
 
