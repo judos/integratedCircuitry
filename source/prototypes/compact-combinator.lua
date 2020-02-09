@@ -30,7 +30,7 @@ data:extend({
 local entity = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
 overwriteContent(entity, {
 	name = "compact-combinator",
-	collision_box = {{-0.95, -0.95}, {0.95, 0.95}},
+	collision_box = {{-0.51, -0.51}, {0.51, 0.51}},
   selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	inventory_size = 0,
 	sprites = {
