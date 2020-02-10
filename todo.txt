@@ -1,9 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- make circuit-pole very low (not 2 tiles height)
-
-
 
 - Less restrictions on which chunk to use with more pole length (place more poles)
 - No concrete floor but land which can't be mined

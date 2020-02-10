@@ -45,58 +45,50 @@ overwriteContent(circuitPole, {
 		filename = "__integratedCircuitry__/graphics/entity/circuit-pole.png",
 		priority = "extra-high",
 		width = 60,
-		height = 62,
+		height = 36,
 		direction_count = 4,
-		shift = {0.5, -0.4}
+		shift = util.by_pixel(16, 1)
 	},
 	track_coverage_during_build_by_moving = false,
 	connection_points = {
 		{
 			shadow = {
-				--copper = {2.7, 0},
-				red = {2.3, 0},
-				green = {3.1, 0}
+				red = {0.6, 0.4},
+				green = {0.9, 0.42}
 			},
 			wire = {
-				--copper = {0, -1.7},
-				red = {-0.375, -1.15},
-				green = {0.00625, -1.15}
+				red = {-0.375, -0.35},
+				green = {0.00625, -0.35}
 			}
 		},
 		{
 			shadow = {
-				--copper = {2.7, -0.05},
-				red = {2.2, -0.35},
-				green = {3, 0.12}
+				red = {0.5, 0.1},
+				green = {0.95, 0.4}
 			},
 			wire = {
-				--copper = {-0.04, -1.8},
-				red = {-0.3, -1.4},
-				green = {0.1, -1.1575}
+				red = {-0.31, -0.5},
+				green = {-0.1, -0.34}
 			}
 		},
 		{
 			shadow = {
-				--copper = {2.5, -0.1},
-				red = {2.55, -0.45},
-				green = {2.5, 0.25}
+				red = {0.85, 0.1},
+				green = {0.85, 0.5}
 			},
 			wire = {
-				--copper = {-0.15625, -1.6875},
-				red = {-0.08, -1.325},
-				green = {-0.065, -1.075}
+				red = {-0.09, -0.525},
+				green = {-0.08, -0.275}
 			}
 		},
 		{
 			shadow = {
-				--copper = {2.30, -0.1},
-				red = {2.65, -0.40},
-				green = {1.75, 0.20}
+				red = {0.85, 0.2},
+				green = {0.5, 0.48}
 			},
 			wire = {
-				--copper = {-0.03125, -1.71875},
-				red = {0.1, -1.3},
-				green = {-0.125, -1.15}
+				red = {0.1, -0.45},
+				green = {-0.125, -0.3}
 			}
 		}
 	},
