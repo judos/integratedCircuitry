@@ -30,8 +30,10 @@ local indicator = table.deepcopy(data.raw["lamp"]["small-lamp"])
 overwriteContent(indicator, {
 	name = "lamp-panel",
 	energy_usage_per_tick = "15KW",
-	light = {intensity = 0.2, size = 5, color = {r=0.5, g=0.5, b=0.5}},
-	light_when_colored = {intensity = 0.2, size = 3, color = {r=0.5, g=0.5, b=0.5}},
+	light = {intensity = 0.2, size = 0.5, color = {r=0.5, g=0.5, b=0.5}},
+	light_when_colored = {intensity = 0.2, size = 0.5, color = {r=0.5, g=0.5, b=0.5}},
+	glow_size = 1,
+	glow_color_intensity = 0.135,
 	picture_off =
 	{
 		filename = "__integratedCircuitry__/graphics/entity/lamp-panel-off.png",
