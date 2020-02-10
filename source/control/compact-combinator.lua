@@ -16,7 +16,8 @@ local private = {} -- private methods
 --		players[$playerName] = {
 --			position = $position,		Position before teleporting into a compact-combinator
 --			surface = $surface			Position before teleporting into a compact-combinator
---		}
+--		},
+--		nextId = number						Setting for next compact-combinator (references to blueprint)
 --	}
 
 
@@ -27,6 +28,7 @@ local private = {} -- private methods
 -- Used data:
 -- {
 --		version = 1 (in the current version)
+--		id = nr (reference for blueprint)
 --		io = { [1-12] = entity } circuit-pole which is used as input/output
 --		poles = { [1-24] = entity } big poles to connect all cables
 --		ports = { [1-12] = entity } circuit-pole used as port internally
@@ -77,6 +79,7 @@ entityMethods.build = function(entity)
 	local position = entity.position
 	local data = {
 		version = 1,
+		id = private.generateId(),
 		io = {},
 		poles = {},
 		ports = {},
@@ -84,7 +87,9 @@ entityMethods.build = function(entity)
 		chunkPos = Surface.newSpot(position.x, position.y),
 	}
 	if data.chunkPos == nil then
-		err("Could not find free spot")
+		entity.surface.create_entity{
+			name="tutorial-flying-text", text="Too many compact-combinators in this chunk!", position=entity.position
+		}
 		entity.destroy()
 		return nil
 	end
@@ -194,7 +199,7 @@ private.copyFromOtherIfAvailable = function(data, entity)
 	local y = cir.get_signal(2).count
 	local size = cir.get_signal(3).count
 	local version = cir.get_signal(4).count
-	if version == nil or version == 0 then return end
+	if version == nil or version == 0 or cir.get_signal(4).signal == nil then return end
 	local surface = Surface.get()
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
 	local blueprint = surface.create_entity{name="item-on-ground", position=chunkMiddle, stack={name="blueprint"}}
@@ -217,12 +222,24 @@ private.writeDataToCombinator = function(data, entity)
 	cir.set_signal(2, {signal={type="virtual", name="signal-Y"}, count=data.chunkPos[2]})
 	cir.set_signal(3, {signal={type="virtual", name="signal-S"}, count=data.size})
 	cir.set_signal(4, {signal={type="virtual", name="signal-V"}, count=data.version})
+	cir.set_signal(5, {signal={type="virtual", name="signal-I"}, count=data.id})
+end
+
+private.generateId = function()
+	local data = private.data()
+	local r = data.nextId
+	data.nextId = data.nextId+1
+	return r
 end
 
 private.data = function()
 	local data = global.integratedCircuitry
 	if not data.cc then
-		data.cc = { players={} }
+		-- initialize data
+		data.cc = { 
+			players = {},
+			nextId = 0
+		}
 	end
 	return data.cc
 end

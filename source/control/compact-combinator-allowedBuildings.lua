@@ -19,7 +19,9 @@ function compactCombinator_checkSurfaceBuildings(entity, player)
 		end
 	end
 	
-	entity.surface.create_entity{name="tutorial-flying-text", text="You can only place combinators here!", position=entity.position}
+	entity.surface.create_entity{
+		name="tutorial-flying-text", text="You can only place combinators here!", position=entity.position
+	}
 	-- if it was an electric pole disconnect copper-cables first otherwise it looks ugly
 	-- because copper-cables are then reorganized to ports..
 	if t=="electric-pole" then
