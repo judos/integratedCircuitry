@@ -15,7 +15,7 @@ function compactCombinator_checkSurfaceBuildings(entity, player)
 			return
 		end
 		if t=="constant-combinator" or t=="decider-combinator" or t=="arithmetic-combinator" or t=="lamp"
-				or t=="programmable-speaker" then
+				or t=="programmable-speaker" or t=="wall" or t=="gate" then
 			return
 		end
 	end
