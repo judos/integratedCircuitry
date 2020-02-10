@@ -4,13 +4,15 @@
 -- global data used:
 -- integratedCircuitry.surface = {
 --		chunks = {
---			[x][y] = bool    -- true if chunk is used
---		}
+--			[x][y] = bool            -- true if chunk is used
+--		},
+--		templates = $entity        -- Chest for storing blueprint items
 --	}
 
 
 local Surface = {} -- exported interface
 local private = {} -- private methods
+
 
 -- returns the coordinates of a new chunk to be used for a compact-combinator
 function Surface.newSpot(x, y)
@@ -34,61 +36,72 @@ function Surface.newSpot(x, y)
 	return nil -- could not find a free chunk nearby
 end
 
-function Surface.placeTiles(chunkPosition, size)
+
+function Surface.placeTiles(chunkPos, size)
 	local tiles = {}
-	local start = 16 - math.ceil((size-1)/2)
-	local to = start + (size-1)
-	for dx=start,to do for dy=start,to do
-		local x = chunkPosition[1] * 32 + dx
-		local y = chunkPosition[2] * 32 + dy
+	local area = Surface.chunkArea(chunkPos, size)
+	for x=area[1][1],area[2][1]-1 do for y=area[1][2],area[2][2]-1 do
 		table.insert(tiles,{name="refined-concrete",position={x,y}})
 	end end
 	Surface.get().set_tiles(tiles)
 end
+
 
 function Surface.chunkMiddle(chunkPos)
 	return {chunkPos[1] * 32 + 16, chunkPos[2] * 32 + 16}
 end
 
 
-function Surface.freeSpot(chunkPosition)
-	Surface.removeEntities(chunkPosition)
-	local size = 32
-	local tiles = {}
-	local start = 16 - math.ceil((size-1)/2)
-	local to = start + (size-1)
-	for dx=start,to do for dy=start,to do
-		local x = chunkPosition[1] * 32 + dx
-		local y = chunkPosition[2] * 32 + dy
+function Surface.chunkArea(chunkPos, size)
+	local start = - math.ceil((size-1)/2)
+	local to = start + size
+	local middle = Surface.chunkMiddle(chunkPos)
+	return {{middle[1]+start, middle[2]+start}, {middle[1]+to, middle[2]+to}}
+end
+
+
+function Surface.freeSpot(chunkPos)
+	Surface.removeEntities(chunkPos)
+	local area = Surface.chunkArea(chunkPos, 32)
+	for x=area[1][1],area[2][1]-1 do for y=area[1][2],area[2][2]-1 do
 		table.insert(tiles, {name="out-of-map",position={x,y}})
 	end end
 	Surface.get().set_tiles(tiles)
-	private.markChunk(chunkPosition, false)
+	private.markChunk(chunkPos, false)
 end
 
-function Surface.removeEntities(chunkPosition)
-	local pos = {chunkPosition[1]*32, chunkPosition[2]*32}
-	local entities = Surface.get().find_entities({{pos[1],pos[2]},{pos[1]+32,pos[2]+32}})
+
+function Surface.removeEntities(chunkPos)
+	local c = {chunkPos[1]*32, chunkPos[2]*32}
+	local entities = Surface.get().find_entities({c,{c[1]+32,c[2]+32}})
 	for _,x in pairs(entities) do
 		x.destroy()
 	end
 end
 
+
 Surface.name = "compact-circuits"
+
+
 function Surface.get()
 	private.init()
 	return game.surfaces[Surface.name]
 end
 
+
+function Surface.templateInventory()
+	return private.data().templates.get_inventory(defines.inventory.chest)
+end
+
+
 function private.init()
 	local d = global.integratedCircuitry
-	if not d.surface then
-		d.surface = {
-			chunks = {}
-		}
-	end
+	if d.surface then return end
+	d.surface = {
+		chunks = {},
+		-- templates = $entity       -- See at the end where chest is created
+	}
 	local surface = game.surfaces[Surface.name]
-	if surface~=nil then return end
 	game.create_surface(Surface.name,{width=1,height=1,peaceful_mode=true})
 	surface = game.surfaces[Surface.name]
 	surface.always_day = true
@@ -99,13 +112,15 @@ function private.init()
 	local tiles = {}
 	table.insert(tiles, {name="out-of-map",position={0,0}})
 	surface.set_tiles(tiles)
-	surface.create_entity{name="steel-chest",position={0,0},force=game.forces.player}
+	d.surface.templates = surface.create_entity{name="steel-chest",position={0,0},force=game.forces.player}
 end
+
 
 function private.data()
 	private.init()
 	return global.integratedCircuitry.surface
 end
+
 
 function private.isChunkUsed(chunk)
 	local x = chunk[1]
@@ -115,6 +130,7 @@ function private.isChunkUsed(chunk)
 	return data[x] and data[x][y]
 end
 
+
 function private.markChunk(chunk, used)
 	local x = chunk[1]
 	local y = chunk[2]
@@ -123,5 +139,6 @@ function private.markChunk(chunk, used)
 	if not data[x] then data[x] = {} end
 	data[x][y] = used
 end
+
 
 return Surface

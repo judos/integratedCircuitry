@@ -1,12 +1,11 @@
 
 TODO IntegratedCircuitry:
 
-- better copy&paste -> leaving combinator updates blueprint item in chest
 - pasting uses blueprint item from chest
 - give back combinator if player build too many in chunk
 - drop combinator on floor if robot tries to built too much
 - remove existing blueprint io ports if robot tries to build too much compact-combinator
-- bigger steel chest for blueprint storage (100'000 slots?)
+- bigger steel chest for blueprint storage (65'536 slots?)
 - allow other mods to place notes/text/hints
 
 - make circuit-pole very low (not 2 tiles height)

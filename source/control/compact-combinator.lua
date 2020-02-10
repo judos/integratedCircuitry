@@ -16,6 +16,7 @@ local private = {} -- private methods
 --		players[$playerName] = {
 --			position = $position,		Position before teleporting into a compact-combinator
 --			surface = $surface			Position before teleporting into a compact-combinator
+--			entity = $entity				Compact-combinator entity that was entered
 --		},
 --		nextId = number						Setting for next compact-combinator (references to blueprint)
 --	}
@@ -50,6 +51,7 @@ guiMethods.open = function(player, entity)
 	local pdata = private.playerData(player.name)
 	pdata.position = player.position
 	pdata.surface = player.surface
+	pdata.entity = entity
 	
 	player.teleport({data.chunkPos[1]*32+16,data.chunkPos[2]*32+16},Surface.get())
 	player.gui.left.add{type="button",name=teleportBackButtonName,caption="Leave the compact combinator"}
@@ -67,6 +69,11 @@ guiMethods.click = function(nameArr, player, entity)
 		player.teleport(pdata.position,pdata.surface)
 		player.gui.left[teleportBackButtonName].destroy()
 		player.minimap_enabled=true
+		
+		-- Update blueprint of built combinator
+		local entity = pdata.entity
+		local data = global.entityData[idOfEntity(entity)]
+		private.updateBlueprintOf(entity, data)
 	end
 end
 
@@ -193,6 +200,18 @@ end
 -- Private methods
 ---------------------------------------------------
 
+private.updateBlueprintOf = function(entity, data)
+	local inv = Surface.templateInventory()
+	-- remove old blueprint
+	inv[data.id].clear()
+	-- create new blueprint
+	local area = Surface.chunkArea(data.chunkPos, data.size)
+	inv[data.id].set_stack{name="blueprint"}
+	local surface = Surface.get()
+	inv[data.id].create_blueprint{surface=surface, force=entity.force, area=area}
+end
+
+
 private.copyFromOtherIfAvailable = function(data, entity)
 	local cir = entity.get_or_create_control_behavior()
 	local x = cir.get_signal(1).count
@@ -238,7 +257,7 @@ private.data = function()
 		-- initialize data
 		data.cc = { 
 			players = {},
-			nextId = 0
+			nextId = 1
 		}
 	end
 	return data.cc
