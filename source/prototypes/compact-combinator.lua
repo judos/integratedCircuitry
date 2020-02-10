@@ -219,3 +219,16 @@ entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
 entity.minable.result = nil
 data:extend({	entity })
+
+
+
+
+
+
+local entity = table.deepcopy(data.raw["container"]["steel-chest"])
+overwriteContent(entity, {
+	name = "compact-combinator-template-chest",
+	inventory_size = 65535,
+	order="z"
+})
+data:extend({	entity })

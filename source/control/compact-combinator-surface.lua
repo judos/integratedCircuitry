@@ -118,7 +118,9 @@ function private.init()
 	local tiles = {}
 	table.insert(tiles, {name="out-of-map",position={0,0}})
 	surface.set_tiles(tiles)
-	d.surface.templates = surface.create_entity{name="steel-chest",position={0,0},force=game.forces.player}
+	d.surface.templates = surface.create_entity{
+		name="compact-combinator-template-chest",position={0,0},force=game.forces.player
+	}
 end
 
 
