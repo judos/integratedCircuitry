@@ -11,10 +11,11 @@ function compactCombinator_checkSurfaceBuildings(entity, player)
 	local t = entity.type
 	local n = entity.name
 	if n~="compact-combinator" then
-		if n=="circuit-pole" then
+		if n=="circuit-pole" or n=="signpost" then
 			return
 		end
-		if t=="constant-combinator" or t=="decider-combinator" or t=="arithmetic-combinator" then
+		if t=="constant-combinator" or t=="decider-combinator" or t=="arithmetic-combinator" or t=="lamp"
+				or t=="programmable-speaker" then
 			return
 		end
 	end

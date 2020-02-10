@@ -1,8 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- allow other mods to place notes/text/hints
-
 - make circuit-pole very low (not 2 tiles height)
 
 
