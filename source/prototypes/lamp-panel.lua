@@ -27,9 +27,11 @@ data:extend({
 
 -- Entity
 local indicator = table.deepcopy(data.raw["lamp"]["small-lamp"])
+local REMOVE = "__REMOVE__"
 overwriteContent(indicator, {
 	name = "lamp-panel",
 	energy_usage_per_tick = "15KW",
+	collision_box = REMOVE,
 	light = {intensity = 0.2, size = 0.5, color = {r=0.5, g=0.5, b=0.5}},
 	light_when_colored = {intensity = 0.2, size = 0.5, color = {r=0.5, g=0.5, b=0.5}},
 	glow_size = 1,
@@ -69,7 +71,7 @@ overwriteContent(indicator, {
         green = {0.40625, 0.45},
       }
     },
-})
+}, REMOVE)
 indicator.circuit_connector_sprites = nil
 table.insert(indicator.signal_to_color_mapping,
 	{type="virtual", name="signal-black", color={r=0.1,g=0.1,b=0.1}}
