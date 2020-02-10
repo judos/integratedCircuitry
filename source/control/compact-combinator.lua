@@ -81,7 +81,8 @@ end
 -- build and remove
 ---------------------------------------------------
 
-entityMethods.build = function(entity)
+-- player may be nil
+entityMethods.build = function(entity, player)
 	--scheduleAdd(entity, TICK_ASAP)
 	local position = entity.position
 	local data = {
@@ -97,7 +98,11 @@ entityMethods.build = function(entity)
 		entity.surface.create_entity{
 			name="tutorial-flying-text", text="Too many compact-combinators in this chunk!", position=entity.position
 		}
-		entity.destroy()
+		if player then
+			player.mine_entity(entity)
+		else
+			entity.destroy()
+		end
 		return nil
 	end
 	

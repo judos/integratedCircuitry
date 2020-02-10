@@ -19,9 +19,10 @@ require "libs.logging"
 
  Register custom entity build, tick or remove function:
 	[$entityName] = { 
-		build = function(entity):dataArr,	
+		build = function(entity, player=nil):dataArr,	
 			if returned arr is nil no data is registered (no remove will be called later)
 			Note: tick your entity with scheduleAdd(entity,TICK_SOON)
+			Note: player is empty if this is built by a robot
 																		 
 		tick = function(entity,data):(nextTick,reason),
 																			
@@ -255,6 +256,10 @@ end
 
 function entities_build(event)
 	local entity = event.created_entity
+	local player = nil
+	if event.player_index ~= nil then
+		player = game.players[event.player_index]
+	end
 	if entity == nil then
 		warn("can't build nil entity")
 		return false
@@ -264,7 +269,7 @@ function entities_build(event)
 		return false
 	end
 	if entities[name].build then
-		local data = entities[name].build(entity)
+		local data = entities[name].build(entity, player)
 		if data ~= nil then
 			data.name = name
 			global.entityData[idOfEntity(entity)] = data
