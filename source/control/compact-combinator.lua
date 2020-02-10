@@ -101,6 +101,10 @@ entityMethods.build = function(entity, player)
 		if player then
 			player.mine_entity(entity)
 		else
+			local item = entity.surface.create_entity{
+				name="item-on-ground",position=entity.position, stack={name="compact-combinator", count=1}
+			}
+			item.order_deconstruction(entity.force)
 			entity.destroy()
 		end
 		return nil

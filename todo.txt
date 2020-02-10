@@ -1,7 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- drop combinator on floor if robot tries to built too much
 - remove existing blueprint io ports if robot tries to build too much compact-combinator
 - bigger steel chest for blueprint storage (65'536 slots?)
 - allow other mods to place notes/text/hints
