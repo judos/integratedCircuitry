@@ -62,6 +62,7 @@ end
 
 function Surface.freeSpot(chunkPos)
 	Surface.removeEntities(chunkPos)
+	local tiles = {}
 	local area = Surface.chunkArea(chunkPos, 32)
 	for x=area[1][1],area[2][1]-1 do for y=area[1][2],area[2][2]-1 do
 		table.insert(tiles, {name="out-of-map",position={x,y}})
@@ -92,6 +93,11 @@ end
 function Surface.templateInventory()
 	return private.data().templates.get_inventory(defines.inventory.chest)
 end
+
+
+---------------------------------------------------
+-- Private methods
+---------------------------------------------------
 
 
 function private.init()

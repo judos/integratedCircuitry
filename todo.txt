@@ -1,7 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- pasting uses blueprint item from chest
 - give back combinator if player build too many in chunk
 - drop combinator on floor if robot tries to built too much
 - remove existing blueprint io ports if robot tries to build too much compact-combinator

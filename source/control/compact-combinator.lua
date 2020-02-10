@@ -153,7 +153,7 @@ entityMethods.build = function(entity)
 	data.substation.disconnect_neighbour()
 	private.indestructible(data.substation)
 	
-	private.copyFromOtherIfAvailable(data,entity)
+	private.pasteStructuresIfBlueprinted(data,entity)
 	private.writeDataToCombinator(data, entity)
 	
 	return data
@@ -212,20 +212,15 @@ private.updateBlueprintOf = function(entity, data)
 end
 
 
-private.copyFromOtherIfAvailable = function(data, entity)
+private.pasteStructuresIfBlueprinted = function(data, entity)
 	local cir = entity.get_or_create_control_behavior()
-	local x = cir.get_signal(1).count
-	local y = cir.get_signal(2).count
-	local size = cir.get_signal(3).count
-	local version = cir.get_signal(4).count
-	if version == nil or version == 0 or cir.get_signal(4).signal == nil then return end
+	local id = cir.get_signal(5).count
+	if id == nil or id == 0 or cir.get_signal(5).signal == nil then return end
 	local surface = Surface.get()
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
-	local blueprint = surface.create_entity{name="item-on-ground", position=chunkMiddle, stack={name="blueprint"}}
-	local s2 = (size-1)/2
-	local area = {{x*32+16-s2, y*32+16-s2},{x*32+16+s2+1, y*32+16+s2+1}}
-	blueprint.stack.create_blueprint{surface=surface, force=entity.force, area=area}
-	local entitiesBuilt = blueprint.stack.build_blueprint{
+	local blueprint = Surface.templateInventory()[id]
+	if not blueprint.valid then return end
+	local entitiesBuilt = blueprint.build_blueprint{
 		surface=surface, force=entity.force, position=chunkMiddle, force_build=true, skip_fog_of_war=false
 	}
 	for k,v in pairs(entitiesBuilt) do
