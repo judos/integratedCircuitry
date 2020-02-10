@@ -2,13 +2,23 @@
 TODO IntegratedCircuitry:
 
 
+- lamp panel: no collision box (CollisionMask)
+- compact-combinator don't remove if player inside
+- kill a compact-combinator with a weapon
+- Duplication of content
+- Destruction of content (drop items on floor)
+- easier exit in compact-combinator
+- player spawn on top of each other
+- player stuck on connections inside compact-combinator surface -> wire_reach: 64
+- different texture for circuit-pole
+- template chest gets deleted when combinator in 0/0 is removed
+
+
 - Less restrictions on which chunk to use with more pole length (place more poles)
 - No concrete floor but land which can't be mined
 
+- Status panel should copy settings in blueprint
+- Virtual signals for status panel
 
-
-
-
-
-
-Status panel should copy settings in blueprint
+FAQ:
+- allow belts, chests, inserters: NO! Not gonna happen for copy/paste
