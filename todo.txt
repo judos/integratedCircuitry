@@ -1,8 +1,12 @@
 
 TODO IntegratedCircuitry:
 
-- Copy & paste with blueprint
+- better copy&paste -> leaving combinator updates blueprint item in chest
+- pasting uses blueprint item from chest
 - allow other mods to place notes/text/hints
+
+- make circuit-pole very low (not 2 tiles height)
+
 
 
 - Less restrictions on which chunk to use with more pole length (place more poles)

@@ -89,10 +89,6 @@ entityMethods.build = function(entity)
 		return nil
 	end
 	
-	
-	
-	private.writeDataToCombinator(data, entity)
-	
 	Surface.placeTiles(data.chunkPos, data.size)
 	local surface = Surface.get()
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
@@ -145,6 +141,9 @@ entityMethods.build = function(entity)
 	data.substation.disconnect_neighbour()
 	private.indestructible(data.substation)
 	
+	private.copyFromOtherIfAvailable(data,entity)
+	private.writeDataToCombinator(data, entity)
+	
 	return data
 end
 
@@ -189,8 +188,31 @@ end
 -- Private methods
 ---------------------------------------------------
 
+private.copyFromOtherIfAvailable = function(data, entity)
+	local cir = entity.get_or_create_control_behavior()
+	local x = cir.get_signal(1).count
+	local y = cir.get_signal(2).count
+	local size = cir.get_signal(3).count
+	local version = cir.get_signal(4).count
+	if version == nil or version == 0 then return end
+	local surface = Surface.get()
+	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
+	local blueprint = surface.create_entity{name="item-on-ground", position=chunkMiddle, stack={name="blueprint"}}
+	local s2 = (size-1)/2
+	local area = {{x*32+16-s2, y*32+16-s2},{x*32+16+s2+1, y*32+16+s2+1}}
+	blueprint.stack.create_blueprint{surface=surface, force=entity.force, area=area}
+	local entitiesBuilt = blueprint.stack.build_blueprint{
+		surface=surface, force=entity.force, position=chunkMiddle, force_build=true, skip_fog_of_war=false
+	}
+	for k,v in pairs(entitiesBuilt) do
+		v.revive()
+	end
+end
+
+
 private.writeDataToCombinator = function(data, entity)
 	local cir = entity.get_or_create_control_behavior()
+	-- order of slots is relevant! See method "copyFromOtherIfAvailable"
 	cir.set_signal(1, {signal={type="virtual", name="signal-X"}, count=data.chunkPos[1]})
 	cir.set_signal(2, {signal={type="virtual", name="signal-Y"}, count=data.chunkPos[2]})
 	cir.set_signal(3, {signal={type="virtual", name="signal-S"}, count=data.size})
