@@ -76,8 +76,19 @@ end
 
 Surface.name = "compact-circuits"
 function Surface.get()
+	private.init()
+	return game.surfaces[Surface.name]
+end
+
+function private.init()
+	local d = global.integratedCircuitry
+	if not d.surface then
+		d.surface = {
+			chunks = {}
+		}
+	end
 	local surface = game.surfaces[Surface.name]
-	if surface~=nil then return surface end
+	if surface~=nil then return end
 	game.create_surface(Surface.name,{width=1,height=1,peaceful_mode=true})
 	surface = game.surfaces[Surface.name]
 	surface.always_day = true
@@ -88,17 +99,12 @@ function Surface.get()
 	local tiles = {}
 	table.insert(tiles, {name="out-of-map",position={0,0}})
 	surface.set_tiles(tiles)
-	return game.surfaces[Surface.name]
+	surface.create_entity{name="steel-chest",position={0,0},force=game.forces.player}
 end
 
 function private.data()
-	local d = global.integratedCircuitry
-	if not d.surface then
-		d.surface = {
-			chunks = {}
-		}
-	end
-	return d.surface
+	private.init()
+	return global.integratedCircuitry.surface
 end
 
 function private.isChunkUsed(chunk)
