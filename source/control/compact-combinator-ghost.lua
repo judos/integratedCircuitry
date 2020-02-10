@@ -11,6 +11,7 @@ entityMethods.build = function(entity)
 	if entity.ghost_name == "compact-combinator-io" then
 		local x,revivedEntity = entity.revive()
 		private.indestructible(revivedEntity)
+		revivedEntity.disconnect_neighbour()
 		return
 	end
 	if entity.ghost_name == "compact-combinator" then
