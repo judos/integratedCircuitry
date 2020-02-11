@@ -15,25 +15,43 @@ local private = {} -- private methods
 
 
 -- returns the coordinates of a new chunk to be used for a compact-combinator
-function Surface.newSpot(x, y)
+function Surface.newSpot(pos_x, pos_y)
 	local data = private.data()
 	
-	local c = { math.floor(x/32), math.floor(y/32) }
-	if not private.isChunkUsed(c) then
-		private.markChunk(c, true)
-		return c
-	end
-	
-	for x=-1,1 do for y=-1,1 do
-		if math.abs(x)+math.abs(y) == 1 then
-			local c2 = {c[1]+x, c[2]+y}
-			if not private.isChunkUsed(c2) then
-				private.markChunk(c2, true)
-				return c2
+	-- spiral search
+	local x = math.floor(pos_x / 32)
+	local y = math.floor(pos_y / 32)
+	local radius = 1
+	local direction = 1
+
+	while true do
+		-- move Y up/down
+		for dy = 0,radius do
+			local chunk = {x, y}
+			if not private.isChunkUsed(chunk) then
+				private.markChunk(chunk, true)
+				return chunk
 			end
+			y = y + direction
 		end
-	end end
-	return nil -- could not find a free chunk nearby
+		-- move X right/left
+		for dx = 0,radius  do
+			local chunk = {x, y}
+			if not private.isChunkUsed(chunk) then
+				private.markChunk(chunk, true)
+				return chunk
+			end
+			x = x + direction
+		end
+		direction = -direction
+		radius = radius + 1
+
+		-- abort if first 9 tiles have no match (remove once infinite distances are allowed)
+		if radius > 2 then
+			return nil
+		end
+	end
+
 end
 
 
