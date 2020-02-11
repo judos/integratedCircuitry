@@ -33,6 +33,13 @@ function Surface.newSpot(pos_x, pos_y)
 				return chunk
 			end
 			y = y + direction
+
+			-- START OF LIMITING CODE (remove when no longer needed)
+			if radius = 3 and dy = 2 then
+				return nil
+			end
+			-- END OF LIMITING CODE
+
 		end
 		-- move X right/left
 		for dx = 0,radius  do
@@ -46,10 +53,11 @@ function Surface.newSpot(pos_x, pos_y)
 		direction = -direction
 		radius = radius + 1
 
-		-- abort if first 9 tiles have no match (remove once infinite distances are allowed)
-		if radius > 2 then
+		-- limit to a search square of approx. 50 x 50 (=2500) chunks
+		if radius > 50 then
 			return nil
 		end
+
 	end
 
 end
