@@ -79,7 +79,9 @@ function Surface.removeEntities(chunkPos)
 	local itemsDropped = {}
 	for _,x in pairs(entities) do
 		if x.name ~= "compact-combinator-connection" and x.name ~= "character" and x.name ~= "compact-combinator-template-chest" then
+			if x.name ~= "compact-combinator-port" and x.name ~= "compact-combinator-substation" and x.name ~= "electric-energy-interface" and x.name ~= "entity-ghost" then
 				itemsDropped[x.name] = (itemsDropped[x.name] or 0)+1
+			end
 			x.destroy()
 		end
 	end
