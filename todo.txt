@@ -1,7 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- Destruction of content (drop items on floor)
 - easier exit in compact-combinator
 
 - Less restrictions on which chunk to use with more pole length (place more poles)

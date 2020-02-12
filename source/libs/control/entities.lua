@@ -26,15 +26,16 @@ require "libs.logging"
 																		 
 		tick = function(entity,data):(nextTick,reason),
 																			
-		premine = function(entity,data,player):manuallyHandle
+		premine = function(entity,data,player?):manuallyHandle
 			if manuallyHandle is true entity will not be added to schedule (tick for removal)
+			Note: player is empty if removed by a robot
 		
 		orderDeconstruct = function(entity,data,player)
 				
 		remove = function(data),
 			clean up any additional entities from your custom data
 			
-		die = function(data),
+		die = function(entity,data),
 			clean up any additional entities from your custom data, spill items on the floor
 			
 		rotate = function(entity,data),
@@ -315,7 +316,7 @@ function entities_died(event)
 	if entities[name] == nil then return end
 	if entities[name].die then
 		local data = global.entityData[idOfEntity(entity)]
-		entities[name].die(data)
+		entities[name].die(entity,data)
 	end
 	local checkEntity = scheduleAdd(entity,TICK_ASAP)
 	checkEntity.noTick = true

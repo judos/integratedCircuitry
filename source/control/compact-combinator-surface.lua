@@ -61,7 +61,7 @@ end
 
 
 function Surface.freeSpot(chunkPos)
-	Surface.removeEntities(chunkPos)
+	local itemsDropped = Surface.removeEntities(chunkPos)
 	local tiles = {}
 	local area = Surface.chunkArea(chunkPos, 31)
 	for x=area[1][1],area[2][1]-1 do for y=area[1][2],area[2][2]-1 do
@@ -69,17 +69,21 @@ function Surface.freeSpot(chunkPos)
 	end end
 	Surface.get().set_tiles(tiles)
 	private.markChunk(chunkPos, false)
+	return itemsDropped
 end
 
 
 function Surface.removeEntities(chunkPos)
 	local c = {chunkPos[1]*32, chunkPos[2]*32}
 	local entities = Surface.get().find_entities({c,{c[1]+32,c[2]+32}})
+	local itemsDropped = {}
 	for _,x in pairs(entities) do
 		if x.name ~= "compact-combinator-connection" and x.name ~= "character" and x.name ~= "compact-combinator-template-chest" then
+				itemsDropped[x.name] = (itemsDropped[x.name] or 0)+1
 			x.destroy()
 		end
 	end
+	return itemsDropped
 end
 
 

@@ -170,11 +170,12 @@ entityMethods.build = function(entity, player)
 end
 
 
-entityMethods.remove = function(data)
+-- player is optional
+entityMethods.premine = function(entity, data, player)
 	-- throw players out
 	local players = private.data().players
-	for playerName,player in pairs(players) do
-		if player.id == data.id then
+	for playerName,playerInsideData in pairs(players) do
+		if playerInsideData.id == data.id then
 			private.returnPlayer(game.players[playerName])
 		end
 	end
@@ -188,11 +189,26 @@ entityMethods.remove = function(data)
 			e.destroy()
 		end
 	end
-	Surface.freeSpot(data.chunkPos) --removes all entities inside
+	local itemsDropped = Surface.freeSpot(data.chunkPos) --removes all entities inside
+		
+	local allReceived = true
+	for item,count in pairs(itemsDropped) do
+		local inserted = player and player.get_main_inventory().insert{name=item, count=count} or 0
+		if inserted < count then
+			allReceived = false
+			local remaining = count - inserted
+			entity.surface.spill_item_stack(entity.position, {name=item, count=remaining}, true, player and nil or entity.force, false)
+		end
+	end
+	if allReceived then
+		entity.surface.create_entity{
+			name="tutorial-flying-text", text="All content of compact-combinator received", position=entity.position
+		}
+	end
 end
 
-entityMethods.die = function(data)
-	entityMethods.remove(data)
+entityMethods.die = function(entity, data)
+	entityMethods.premine(entity, data)
 end
 
 entityMethods.copy = function(source,srcData,target,targetData)
@@ -269,7 +285,7 @@ private.pasteStructuresIfBlueprinted = function(data, entity)
 	local surface = Surface.get()
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
 	local blueprint = Surface.templateInventory()[id]
-	if not blueprint.valid then return end
+	if not blueprint.valid or not blueprint.valid_for_read then return end
 	local entitiesBuilt = blueprint.build_blueprint{
 		surface=surface, force=entity.force, position=chunkMiddle, force_build=true, skip_fog_of_war=false
 	}
@@ -294,7 +310,13 @@ private.reviveAvailableBlueprints = function(entity,data)
 	local chestInv = data.chest.get_inventory(defines.inventory.chest)
 	for k,e in pairs(ghosts) do
 		local removed = chestInv.remove({name=e.ghost_name})
-		if removed > 0 then e.revive() end
+		if removed > 0 then 
+			local p = e.position
+			local _,revivedEntity = e.revive()
+			if not revivedEntity then
+				entity.surface.spill_item_stack(entity.position, {name=e.ghost_name,count=1}, true, entity.force, false)
+			end
+		end
 	end
 	data.chest.destroy()
 	data.chest = nil
