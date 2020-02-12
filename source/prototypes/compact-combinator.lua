@@ -180,7 +180,8 @@ local entity = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])
 overwriteContent(entity, {
 	name = "compact-combinator-connection",
 	collision_box = removeKey, -- {{0, 0}, {0, 0}},
-  selection_box = removeKey, --{{-0.25, -0.25}, {0.25, 0.25}},
+	selection_box = removeKey, --{{-0.25, -0.25}, {0.25, 0.25}},
+	collision_mask = {},
 	order="a",
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,

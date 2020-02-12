@@ -31,7 +31,8 @@ local REMOVE = "__REMOVE__"
 overwriteContent(indicator, {
 	name = "lamp-panel",
 	energy_usage_per_tick = "15KW",
-	collision_box = REMOVE,
+	collision_box = {{-0.4,-0.4},{0.4,0.4}},
+	collision_mask = {"water-tile", "item-layer", "object-layer"},
 	light = {intensity = 0.2, size = 0.5, color = {r=0.5, g=0.5, b=0.5}},
 	light_when_colored = {intensity = 0.2, size = 0.5, color = {r=0.5, g=0.5, b=0.5}},
 	glow_size = 1,
