@@ -300,6 +300,7 @@ private.pasteStructuresIfBlueprinted = function(data, entity)
 	data.proxy = entity.surface.create_entity{
 		name="item-request-proxy",position=data.chest.position,target=data.chest,modules=request,force=entity.force
 	}
+	private.updateBlueprintOf(entity, data)
 end
 
 
