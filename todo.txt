@@ -2,8 +2,6 @@
 TODO IntegratedCircuitry:
 
 
-- Duplication of content
-
 - compact-combinator don't remove if player inside
 - kill a compact-combinator with a weapon
 - Destruction of content (drop items on floor)

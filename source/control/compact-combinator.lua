@@ -35,6 +35,8 @@ local private = {} -- private methods
 --		ports = { [1-12] = entity } circuit-pole used as port internally
 --		power = entity,
 --		substation = entity,
+--		chest = entity?,					Stores items requested when blueprinted, otherwise nil
+--		proxy = entity?,					Requests items when blueprinted, otherwise nil
 --		size = size of the compact combinator
 --    chunkPos = position of the center of the blueprint
 -- }
@@ -85,7 +87,6 @@ end
 
 -- player may be nil
 entityMethods.build = function(entity, player)
-	--scheduleAdd(entity, TICK_ASAP)
 	local position = entity.position
 	local data = {
 		version = 1,
@@ -167,6 +168,9 @@ entityMethods.build = function(entity, player)
 	private.pasteStructuresIfBlueprinted(data,entity)
 	private.writeDataToCombinator(data, entity)
 	
+	if data.proxy then
+		scheduleAdd(entity, TICK_ASAP) --only tick if needed for reviving blueprints
+	end
 	return data
 end
 
@@ -203,6 +207,15 @@ entityMethods.tick = function(entity,data)
 		err("Error occured with status-panel: "..idOfEntity(filterCombinator))
 		return 300,nil
 	end
+	if data.proxy and not data.proxy.valid then
+		if data.chest and data.chest.valid then
+			info("finished requesting items")
+			private.reviveAvailableBlueprints(entity,data)
+			return nil --don't update anymore
+		end
+	end
+	
+	
 	
 	return 60 --sleep to next update
 end
@@ -234,9 +247,31 @@ private.pasteStructuresIfBlueprinted = function(data, entity)
 	local entitiesBuilt = blueprint.build_blueprint{
 		surface=surface, force=entity.force, position=chunkMiddle, force_build=true, skip_fog_of_war=false
 	}
+	local request = {}
 	for k,v in pairs(entitiesBuilt) do
-		v.revive()
+		request[v.ghost_name] = (request[v.ghost_name] or 0) + 1
 	end
+	data.chest = entity.surface.create_entity{
+		name="steel-chest",position={entity.position.x-0.5,entity.position.y},force=entity.force
+	}
+	data.chest.operable=false
+	data.proxy = entity.surface.create_entity{
+		name="item-request-proxy",position=data.chest.position,target=data.chest,modules=request,force=entity.force
+	}
+end
+
+
+private.reviveAvailableBlueprints = function(entity,data)
+	local area = Surface.chunkArea(data.chunkPos, data.size)
+	local surface = Surface.get()
+	local ghosts = surface.find_entities_filtered{area=area,name="entity-ghost"}
+	local chestInv = data.chest.get_inventory(defines.inventory.chest)
+	for k,e in pairs(ghosts) do
+		local removed = chestInv.remove({name=e.ghost_name})
+		if removed > 0 then e.revive() end
+	end
+	data.chest.destroy()
+	data.chest = nil
 end
 
 
