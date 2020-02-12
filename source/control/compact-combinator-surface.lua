@@ -76,7 +76,9 @@ function Surface.removeEntities(chunkPos)
 	local c = {chunkPos[1]*32, chunkPos[2]*32}
 	local entities = Surface.get().find_entities({c,{c[1]+32,c[2]+32}})
 	for _,x in pairs(entities) do
-		x.destroy()
+		if x.name ~= "compact-combinator-connection" and x.name ~= "character" and x.name ~= "compact-combinator-template-chest" then
+			x.destroy()
+		end
 	end
 end
 

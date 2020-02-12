@@ -17,6 +17,7 @@ local private = {} -- private methods
 --			position = $position,		Position before teleporting into a compact-combinator
 --			surface = $surface			Position before teleporting into a compact-combinator
 --			entity = $entity				Compact-combinator entity that was entered
+--			id = $number						ID of entered compact-combinator (for throwing players out)
 --		},
 --		nextId = number						Setting for next compact-combinator (references to blueprint)
 --	}
@@ -54,6 +55,7 @@ guiMethods.open = function(player, entity)
 	pdata.position = player.position
 	pdata.surface = player.surface
 	pdata.entity = entity
+	pdata.id = data.id
 	
 	local dx = math.random()*2 - 0.5
 	local dy = math.random()*2 - 0.5
@@ -69,17 +71,10 @@ guiMethods.click = function(nameArr, player, entity)
 	local button = table.remove(nameArr,1)
 	if button == "back" then
 		-- Note: entity is nil here because there is no open UI
-		local pdata = private.playerData(player.name)
-		player.teleport(pdata.position,pdata.surface)
-		player.gui.left[teleportBackButtonName].destroy()
-		player.minimap_enabled=true
-		
-		-- Update blueprint of built combinator
-		local entity = pdata.entity
-		local data = global.entityData[idOfEntity(entity)]
-		private.updateBlueprintOf(entity, data)
+		private.returnPlayer(player)
 	end
 end
+
 
 ---------------------------------------------------
 -- build and remove
@@ -176,6 +171,13 @@ end
 
 
 entityMethods.remove = function(data)
+	-- throw players out
+	local players = private.data().players
+	for playerName,player in pairs(players) do
+		if player.id == data.id then
+			private.returnPlayer(game.players[playerName])
+		end
+	end
 	if data.io then
 		for k,e in pairs(data.io) do
 			e.destroy()
@@ -223,6 +225,26 @@ end
 ---------------------------------------------------
 -- Private methods
 ---------------------------------------------------
+
+private.returnPlayer = function(player)
+	local pdata = private.playerData(player.name)
+	player.teleport(pdata.position,pdata.surface)
+	player.gui.left[teleportBackButtonName].destroy()
+	player.minimap_enabled=true
+	
+	-- Update blueprint of built combinator
+	local entity = pdata.entity
+	if entity.valid then -- might be invalid if removed and player is thrown out
+		local data = global.entityData[idOfEntity(entity)]
+		private.updateBlueprintOf(entity, data)
+	end
+	
+	pdata.id = nil
+	pdata.position = nil
+	pdata.surface = nil
+	pdata.entity = nil
+end
+
 
 private.updateBlueprintOf = function(entity, data)
 	local inv = Surface.templateInventory()
