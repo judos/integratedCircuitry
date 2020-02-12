@@ -53,7 +53,9 @@ guiMethods.open = function(player, entity)
 	pdata.surface = player.surface
 	pdata.entity = entity
 	
-	player.teleport({data.chunkPos[1]*32+16,data.chunkPos[2]*32+16},Surface.get())
+	local dx = math.random()*2 - 0.5
+	local dy = math.random()*2 - 0.5
+	player.teleport({data.chunkPos[1]*32+16+dx,data.chunkPos[2]*32+16+dy},Surface.get())
 	player.gui.left.add{type="button",name=teleportBackButtonName,caption="Leave the compact combinator"}
 end
 

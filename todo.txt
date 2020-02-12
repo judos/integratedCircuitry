@@ -3,7 +3,6 @@ TODO IntegratedCircuitry:
 
 
 - Duplication of content
-- player spawn on top of each other
 
 - compact-combinator don't remove if player inside
 - kill a compact-combinator with a weapon
