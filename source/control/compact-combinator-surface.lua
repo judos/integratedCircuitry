@@ -63,7 +63,7 @@ end
 function Surface.freeSpot(chunkPos)
 	Surface.removeEntities(chunkPos)
 	local tiles = {}
-	local area = Surface.chunkArea(chunkPos, 32)
+	local area = Surface.chunkArea(chunkPos, 31)
 	for x=area[1][1],area[2][1]-1 do for y=area[1][2],area[2][2]-1 do
 		table.insert(tiles, {name="out-of-map",position={x,y}})
 	end end

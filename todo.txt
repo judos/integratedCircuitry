@@ -4,7 +4,6 @@ TODO IntegratedCircuitry:
 - kill a compact-combinator with a weapon
 - Destruction of content (drop items on floor)
 - easier exit in compact-combinator
-- template chest gets deleted when combinator in 0/0 is removed
 
 
 - Less restrictions on which chunk to use with more pole length (place more poles)
