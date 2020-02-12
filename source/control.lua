@@ -90,6 +90,10 @@ script.on_event(defines.events.on_pre_player_mined_item, function(event)
 	entities_pre_mined(event)
 end)
 
+script.on_event(defines.events.on_entity_died, function(event)
+	entities_died(event)
+end)
+
 ---------------------------------------------------
 -- Settings / Deconstruction
 ---------------------------------------------------

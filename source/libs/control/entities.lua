@@ -34,6 +34,9 @@ require "libs.logging"
 		remove = function(data),
 			clean up any additional entities from your custom data
 			
+		die = function(data),
+			clean up any additional entities from your custom data, spill items on the floor
+			
 		rotate = function(entity,data),
 			called when an entity is rotated by the player
 				
@@ -57,6 +60,7 @@ require "libs.logging"
 	entities_build(event)
 	entities_tick()
 	entities_pre_mined(event)
+	entities_died(event)
 	entities_rotate(event)
 	entities_settings_pasted(event)
 	entities_marked_for_deconstruction(event)
@@ -303,6 +307,22 @@ function entities_pre_mined(event)
 		checkEntity.clearSchedule = true
 	end
 end
+
+
+function entities_died(event)
+	local entity = event.entity
+	local name = entity.name
+	if entities[name] == nil then return end
+	if entities[name].die then
+		local data = global.entityData[idOfEntity(entity)]
+		entities[name].die(data)
+	end
+	local checkEntity = scheduleAdd(entity,TICK_ASAP)
+	checkEntity.noTick = true
+	checkEntity.clearSchedule = true
+end
+
+
 
 function entities_marked_for_deconstruction(event)
 	local entity = event.entity

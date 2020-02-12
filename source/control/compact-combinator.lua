@@ -191,6 +191,10 @@ entityMethods.remove = function(data)
 	Surface.freeSpot(data.chunkPos) --removes all entities inside
 end
 
+entityMethods.die = function(data)
+	entityMethods.remove(data)
+end
+
 entityMethods.copy = function(source,srcData,target,targetData)
 	
 end

@@ -1,10 +1,8 @@
 
 TODO IntegratedCircuitry:
 
-- kill a compact-combinator with a weapon
 - Destruction of content (drop items on floor)
 - easier exit in compact-combinator
-
 
 - Less restrictions on which chunk to use with more pole length (place more poles)
 - No concrete floor but land which can't be mined
