@@ -99,11 +99,14 @@ entityMethods.build = function(entity, player)
 		if player then
 			player.mine_entity(entity)
 		else
-			local item = entity.surface.create_entity{
-				name="item-on-ground",position=entity.position, stack={name="compact-combinator", count=1}
-			}
-			item.order_deconstruction(entity.force)
+			local pos = entity.position
+			local force = entity.force
+			local surface = entity.surface
 			entity.destroy()
+			local item = surface.create_entity{
+				name="item-on-ground",position=position, stack={name="compact-combinator", count=1}
+			}
+			item.order_deconstruction(force)
 		end
 		return nil
 	end
@@ -123,28 +126,16 @@ entityMethods.build = function(entity, player)
 			p.disconnect_neighbour()
 			table.insert(data.io, p)
 			
-			local pole1 = surface.create_entity{
-				name="compact-combinator-connection", position=position, force=entity.force
-			}
-			private.indestructible(pole1)
-			pole1.disconnect_neighbour()
-			private.connectWires(p, pole1)
-			table.insert(data.poles, pole1)
-			
-			local pole2 = surface.create_entity{
-				name="compact-combinator-connection", position=chunkMiddle, force=entity.force
-			}
-			private.indestructible(pole2)
-			pole2.disconnect_neighbour()
-			private.connectWires(pole1, pole2)
-			table.insert(data.poles, pole2)
+			local poles = private.buildPolesFromTo({position.x,position.y}, chunkMiddle, surface, entity.force)
+			table.appendTable(data.poles, poles)
+			private.connectWires(p, poles[1])
 			
 			local port = surface.create_entity{
 				name="compact-combinator-port", position= {chunkMiddle[1]+x*3, chunkMiddle[2]+y*3}, force=entity.force
 			}
 			private.indestructible(port)
 			port.disconnect_neighbour()
-			private.connectWires(pole2, port)
+			private.connectWires(poles[#poles], port)
 			table.insert(data.ports, port)
 		end end
 	end
@@ -246,6 +237,42 @@ end
 ---------------------------------------------------
 -- Private methods
 ---------------------------------------------------
+
+private.buildPolesFromTo = function(pos1, pos2, surface, force)
+	local poles = {}
+	poles[1] = surface.create_entity{
+		name="compact-combinator-connection", position=pos1, force=force
+	}
+	private.indestructible(poles[1])
+	poles[1].disconnect_neighbour()
+	
+	local current = pos1
+	local nr = 0
+	local poleMaxD = 5 -- 64 is max wire distance, use 63 to make sure it always connects (number precision)
+	while true do
+		local dist = util.distance(current, pos2)
+		if dist == 0 then break end
+		
+		local w = math.atan2(pos2[2] - current[2], pos2[1] - current[1])
+		local step = math.min(poleMaxD, dist)
+		current[1] = current[1] + math.cos(w)*step
+		current[2] = current[2] + math.sin(w)*step
+		
+		local pole = surface.create_entity{
+			name="compact-combinator-connection", position=current, force=force
+		}
+		private.indestructible(pole)
+		pole.disconnect_neighbour()
+		private.connectWires(poles[#poles], pole)
+		table.insert(poles, pole)
+		
+		nr=nr+1
+		if nr > 5 then break end
+	end
+	
+	return poles
+end
+
 
 private.returnPlayer = function(player)
 	local pdata = private.playerData(player.name)

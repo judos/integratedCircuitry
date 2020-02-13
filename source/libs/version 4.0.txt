@@ -8,6 +8,7 @@ TODO 4.0:
 	entities: added copyTo event
 	entitieS: added die event
 	entities: build now supports 2nd param: player (is nil for robots)
+	lua.table: added "appendTable"
 	MIGRATION:
 		removed deepcopy, use table.deepcopy from 'require "util"' instead
 		instead of string.starts use string.startsWith

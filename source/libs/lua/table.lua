@@ -15,6 +15,10 @@ function table.addTable(t,toAdd)
 	end
 end
 
+function table.appendTable(t, toAdd)
+	for k,v in pairs(toAdd) do table.insert(t, v) end
+end
+
 function table.set(t) -- set of list
   local s = { }
   for _, v in ipairs(t) do s[v] = true end
