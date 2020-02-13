@@ -123,7 +123,7 @@ entityMethods.build = function(entity, player)
 				}
 			end
 			private.indestructible(p)
-			p.disconnect_neighbour()
+			--p.disconnect_neighbour()
 			table.insert(data.io, p)
 			
 			local poles = private.buildPolesFromTo({position.x,position.y}, chunkMiddle, surface, entity.force)
@@ -134,7 +134,7 @@ entityMethods.build = function(entity, player)
 				name="compact-combinator-port", position= {chunkMiddle[1]+x*3, chunkMiddle[2]+y*3}, force=entity.force
 			}
 			private.indestructible(port)
-			port.disconnect_neighbour()
+			--port.disconnect_neighbour()
 			private.connectWires(poles[#poles], port)
 			table.insert(data.ports, port)
 		end end
@@ -148,7 +148,7 @@ entityMethods.build = function(entity, player)
 	data.substation = surface.create_entity{
 		name="compact-combinator-substation", position=chunkMiddle, force=entity.force
 	}
-	data.substation.disconnect_neighbour()
+	--data.substation.disconnect_neighbour()
 	private.indestructible(data.substation)
 	
 	private.pasteStructuresIfBlueprinted(data,entity)

@@ -68,7 +68,7 @@ overwriteContent(entity, {
 	order="a",
 	track_coverage_during_build_by_moving = false,
 	supply_area_distance = 0,
-	--draw_copper_wires = false,
+	draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",
