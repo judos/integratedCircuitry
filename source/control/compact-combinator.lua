@@ -244,7 +244,6 @@ private.buildPolesFromTo = function(pos1, pos2, surface, force)
 		name="compact-combinator-connection", position=pos1, force=force
 	}
 	private.indestructible(poles[1])
-	poles[1].disconnect_neighbour()
 	
 	local current = pos1
 	local nr = 0
@@ -262,7 +261,6 @@ private.buildPolesFromTo = function(pos1, pos2, surface, force)
 			name="compact-combinator-connection", position=current, force=force
 		}
 		private.indestructible(pole)
-		pole.disconnect_neighbour()
 		private.connectWires(poles[#poles], pole)
 		table.insert(poles, pole)
 		
