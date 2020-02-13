@@ -248,7 +248,7 @@ private.buildPolesFromTo = function(pos1, pos2, surface, force)
 	
 	local current = pos1
 	local nr = 0
-	local poleMaxD = 5 -- 64 is max wire distance, use 63 to make sure it always connects (number precision)
+	local poleMaxD = 63 -- 64 is max wire distance, use 63 to make sure it always connects (number precision)
 	while true do
 		local dist = util.distance(current, pos2)
 		if dist == 0 then break end
@@ -267,7 +267,7 @@ private.buildPolesFromTo = function(pos1, pos2, surface, force)
 		table.insert(poles, pole)
 		
 		nr=nr+1
-		if nr > 5 then break end
+		if nr > 50 then break end
 	end
 	
 	return poles

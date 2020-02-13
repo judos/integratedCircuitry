@@ -26,23 +26,16 @@ function Surface.newSpot(pos_x, pos_y)
 
 	while true do
 		-- move Y up/down
-		for dy = 0,radius do
+		for dy = 1,radius do
 			local chunk = {x, y}
 			if not private.isChunkUsed(chunk) then
 				private.markChunk(chunk, true)
 				return chunk
 			end
 			y = y + direction
-
-			-- START OF LIMITING CODE (remove when no longer needed)
-			if radius = 3 and dy = 2 then
-				return nil
-			end
-			-- END OF LIMITING CODE
-
 		end
 		-- move X right/left
-		for dx = 0,radius  do
+		for dx = 1,radius  do
 			local chunk = {x, y}
 			if not private.isChunkUsed(chunk) then
 				private.markChunk(chunk, true)
