@@ -172,6 +172,7 @@ end
 
 -- player is optional
 entityMethods.premine = function(entity, data, player)
+	if not data then return end --construction with immediate mine_entity called by own code -> no data set yet
 	-- throw players out
 	local players = private.data().players
 	for playerName,playerInsideData in pairs(players) do

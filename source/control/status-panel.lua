@@ -39,8 +39,6 @@ function migrate_0_1_1_statusPanel()
 					force=nil
 				}
 			end
-		else
-			info("Unknown entity: "..data.name)
 		end
 	end
 end
