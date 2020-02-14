@@ -61,7 +61,7 @@ local function handleEvent(uiComponentIdentifier,player)
 	local guiEvent = split(uiComponentIdentifier,".")
 	local eventIsForMod = table.remove(guiEvent,1)
 	if eventIsForMod == modName then
-		local entityName = player.opened_gui_type == defines.gui_type.entity and player.opened or nil
+		local entityName = player.opened_gui_type == defines.gui_type.entity and player.opened.name or nil
 		if entityName and gui[entityName] then
 			if gui[entityName].click ~= nil then
 				gui[entityName].click(guiEvent,player,player.opened)
