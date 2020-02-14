@@ -18,6 +18,7 @@ local private = {} -- private methods
 --			surface = $surface			Position before teleporting into a compact-combinator
 --			entity = $entity				Compact-combinator entity that was entered
 --			id = $number						ID of entered compact-combinator (for throwing players out)
+--			firstTime = $bool				If the player enters a compact-combinator the first time
 --		},
 --		nextId = number						Setting for next compact-combinator (references to blueprint)
 --	}
@@ -46,6 +47,8 @@ local private = {} -- private methods
 -- GUI
 --------------------------------------------------
 local teleportBackButtonName = "integratedCircuitry.compact-combinator.back"
+local closeButtonName = "integratedCircuitry.compact-combinator.close"
+local informationFrame = "integratedCircuitry.compact-combinator.infoFrame"
 
 guiMethods.open = function(player, entity)
 	local data = global.entityData[idOfEntity(entity)]
@@ -60,7 +63,19 @@ guiMethods.open = function(player, entity)
 	local dx = math.random()*2 - 0.5
 	local dy = math.random()*2 - 0.5
 	player.teleport({data.chunkPos[1]*32+16+dx,data.chunkPos[2]*32+16+dy},Surface.get())
-	player.gui.left.add{type="button",name=teleportBackButtonName,caption="Leave the compact combinator"}
+	
+	player.gui.left.add{type="button",name=teleportBackButtonName,caption={"compact-combinator.leave"}}
+	
+	if pdata.firstTime then
+		pdata.firstTime = false
+			local frame = player.gui.center.add{ type="frame",name=informationFrame,
+				direction="vertical",caption={"compact-combinator.first-entry"} }
+			frame.add{ type="label", name="integratedCircuitry.text1", caption={"compact-combinator.first-entry-text1"} }
+			frame.add{ type="label", name="integratedCircuitry.text2", caption={"compact-combinator.first-entry-text2"} }
+			frame.add{ type="label", name="integratedCircuitry.text3", caption={"compact-combinator.first-entry-text3"}, style="bold_label" }
+			--{"compact-combinator-first-entry-text"} }
+			frame.add{ type="button", name=closeButtonName, caption={"gui.close"} }
+	end
 end
 
 guiMethods.close = function(player)
@@ -72,6 +87,8 @@ guiMethods.click = function(nameArr, player, entity)
 	if button == "back" then
 		-- Note: entity is nil here because there is no open UI
 		private.returnPlayer(player)
+	elseif button == "close" then
+		player.gui.center[informationFrame].destroy()
 	end
 end
 
@@ -94,7 +111,7 @@ entityMethods.build = function(entity, player)
 	}
 	if data.chunkPos == nil then
 		entity.surface.create_entity{
-			name="tutorial-flying-text", text="Too many compact-combinators in this chunk!", position=entity.position
+			name="tutorial-flying-text", text={"compact-combinator.too-many"}, position=entity.position
 		}
 		if player then
 			player.mine_entity(entity)
@@ -184,17 +201,19 @@ entityMethods.premine = function(entity, data, player)
 	local itemsDropped = Surface.freeSpot(data.chunkPos) --removes all entities inside
 		
 	local allReceived = true
+	local itemsReceived = 0
 	for item,count in pairs(itemsDropped) do
 		local inserted = player and player.get_main_inventory().insert{name=item, count=count} or 0
+		itemsReceived = itemsReceived + count
 		if inserted < count then
 			allReceived = false
 			local remaining = count - inserted
 			entity.surface.spill_item_stack(entity.position, {name=item, count=remaining}, true, player and nil or entity.force, false)
 		end
 	end
-	if allReceived then
+	if allReceived and itemsReceived > 0 then
 		entity.surface.create_entity{
-			name="tutorial-flying-text", text="All content of compact-combinator received", position=entity.position
+			name="tutorial-flying-text", text={"compact-combinator.received-all-content"}, position=entity.position
 		}
 	end
 end
@@ -218,7 +237,7 @@ end
 
 entityMethods.tick = function(entity,data)
 	if not data then
-		err("Error occured with status-panel: "..idOfEntity(filterCombinator))
+		err("Error occured with compact-combinator: "..idOfEntity(filterCombinator))
 		return 300,nil
 	end
 	if data.proxy and not data.proxy.valid then
@@ -382,7 +401,9 @@ end
 private.playerData = function(playerName)
 	local players = private.data().players
 	if not players[playerName] then
-		players[playerName] = {}
+		players[playerName] = {
+			firstTime = true
+		}
 	end
 	return players[playerName]
 end

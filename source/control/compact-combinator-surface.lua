@@ -148,6 +148,9 @@ function private.init()
 	d.surface.templates = surface.create_entity{
 		name="compact-combinator-template-chest",position={0,0},force=game.forces.player
 	}
+	d.surface.templates.operable = false
+	d.surface.templates.minable = false
+	d.surface.templates.operable = false
 end
 
 
