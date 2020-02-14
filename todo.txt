@@ -1,8 +1,5 @@
 
 TODO IntegratedCircuitry:
 
-- Status panel should copy settings in blueprint
-- Virtual signals for status panel
-
 FAQ:
 - allow belts, chests, inserters: NO! Not gonna happen for copy/paste

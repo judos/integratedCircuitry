@@ -14,34 +14,11 @@ local m = {} --used for methods of the statusPanel
 
 -- Used data:
 -- {
---   sprite = luaEntity(car object showing the sprite)
+--   sprite = luaEntity
 --   min = integer(min value to show red)
 --   max = integer(max value to show green)
 --   signal = table( type = string(item,fluid,virtual_signal), name = string)
 -- }
-
---------------------------------------------------
--- Migration
---------------------------------------------------
-
-function migrate_0_1_1_statusPanel()
-	for id,data in pairs(global.entityData) do
-		if data.name == "status-panel" then
-			if not data.sprite.valid then
-				local location = positionOfId(id)
-				local surface = surfaceWithIndex(location.surfaceIndex)
-				local position = location.position
-				data.sprite = surface.create_entity{
-					name="ic-status-panel-sprite", 
-					-- y-offset is required for correct order of sprite display
-					-- the offset is undone by using shift value in the sprite
-					position= {x=position.x , y=position.y+1}, 
-					force=nil
-				}
-			end
-		end
-	end
-end
 
 ---------------------------------------------------
 -- build and remove
@@ -59,15 +36,17 @@ statusPanel.build = function(entity)
 		force=entity.force
 	}
 	sprite.orientation=0
-	sprite.insert({name="coal",count=1})
+	--sprite.insert({name="coal",count=1})
 	sprite.destructible = false
 	sprite.minable = false
-	return {
+	local data = {
 		sprite = sprite,
 		min = 0,
 		max = 100,
 		signal = nil
 	}
+	m.loadDataFromConfig(entity, data)
+	return data
 end
 
 statusPanel.remove = function(data)
@@ -92,11 +71,12 @@ end
 
 gui["status-panel"]={}
 gui["status-panel"].open = function(player,entity)
-	if player.gui.left.statusPanel then
-		player.gui.left.statusPanel.destroy()
+	player.opened = nil
+	if player.gui.screen["status-panel"] then
+		player.gui.screen["status-panel"].destroy()
 	end
 	
-	local frame = player.gui.left.add{type="frame",name="statusPanel",direction="vertical",caption={"status-panel"}}
+	local frame = player.gui.screen.add{type="frame",name="status-panel",direction="vertical",caption={"status-panel"}}
 	frame.add{type="label",name="description",caption={"status-panel-description"}}
 	frame.add{type="table",name="table",column_count=2}
 
@@ -108,20 +88,25 @@ gui["status-panel"].open = function(player,entity)
 	
 	frame.table.add{type="label",name="max",caption={"",{"green_value"},":"}}
 	frame.table.add{type="textfield",name="integratedCircuitry.max"}
+	frame.force_auto_center()
 	
 	m.updateGui(player,entity)
+	player.opened = frame
 end
 
-gui["status-panel"].close = function(player)
-	if player.gui.left.statusPanel then
-		player.gui.left.statusPanel.destroy()
+gui["status-panel"].close = function(player, typ)
+	if typ == defines.gui_type.custom then
+		if player.gui.screen["status-panel"] then
+			player.gui.screen["status-panel"].destroy()
+		end
 	end
 end
 
 gui["status-panel"].click = function(nameArr,player,entity)
 	local fieldName = table.remove(nameArr,1)
+	info(fieldName)
 	if fieldName == "signal" then
-		local box = player.gui.left.statusPanel.table["integratedCircuitry.signal"]
+		local box = player.gui.screen["status-panel"].table["integratedCircuitry.signal"]
 		local itemName = box.elem_value
 		if itemName then
 			local prototype = prototypesForGroup("item")[itemName]
@@ -129,16 +114,42 @@ gui["status-panel"].click = function(nameArr,player,entity)
 		else
 			m.setSignal(player,entity,nil)
 		end
+		local data = global.entityData[idOfEntity(entity)]
+		m.writeDataToConfig(data, entity)
 	elseif table.set({"min","max"})[fieldName] then
 		local data = global.entityData[idOfEntity(entity)]
-		local tab = player.gui.left.statusPanel.table
+		local tab = player.gui.screen["status-panel"].table
 		local text = tab["integratedCircuitry."..fieldName].text
 		if text~="" and text~="-" then 
 			text = tonumber(text) or ""
 			tab["integratedCircuitry."..fieldName].text = text -- correct alpha numeric input
 		end
 		data[fieldName] = tonumber(text)
+		m.writeDataToConfig(data, entity)
 	end
+end
+
+m.loadDataFromConfig = function(entity, data)
+	local cir = entity.get_or_create_control_behavior()
+	data.signal = cir.get_signal(1).signal
+	if cir.get_signal(2).signal then
+		data.min = cir.get_signal(2).count
+	end
+	if cir.get_signal(3).signal then
+		data.max = cir.get_signal(3).count
+	end
+end
+
+m.writeDataToConfig = function(data, entity)
+	local cir = entity.get_or_create_control_behavior()
+	-- order of slots is relevant! See method "copyFromOtherIfAvailable"
+	if data.signal then
+		cir.set_signal(1, {signal={type="item", name=data.signal.name}, count=0})
+	else
+		cir.set_signal(1, nil)
+	end
+	cir.set_signal(2, {signal={type="virtual", name="signal-M"}, count=data.min or 0})
+	cir.set_signal(3, {signal={type="virtual", name="signal-N"}, count=data.max or 500})
 end
 
 m.setSignal = function(player,entity,arr)
@@ -171,7 +182,7 @@ end
 m.updateGui = function(player,entity)
 	local data = global.entityData[idOfEntity(entity)]
 	
-	local tab = player.gui.left.statusPanel.table
+	local tab = player.gui.screen["status-panel"].table
 	tab["integratedCircuitry.min"].text = data.min or ""
 	tab["integratedCircuitry.max"].text = data.max or ""
 	local signal = tab["integratedCircuitry.signal"]
@@ -191,7 +202,7 @@ statusPanel.tick = function(statusPanel,data)
 		err("Error occured with status-panel: "..idOfEntity(statusPanel))
 		return 0,nil
 	end
-	if not data.signal or statusPanel.energy == 0 then
+	if not data.signal then
 		data.sprite.graphics_variation = 1
 		return 60,nil
 	end

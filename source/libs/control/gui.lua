@@ -1,7 +1,7 @@
 
 -- Constants:
 local guiUpdateEveryTicks = 5
-
+local private = {}
 --------------------------------------------------
 -- API
 --------------------------------------------------
@@ -11,9 +11,11 @@ local guiUpdateEveryTicks = 5
 
 -- Usage:
 -- each known gui defines these functions:
-gui = {} -- [$entityName] = { open = $function(player,entity),
---                            close = $function(player),
---                            click = $function(nameArr, player, entity) }
+gui = {} 
+-- [$entityName] = { 
+--    open = $function(player,entity, gui_type),			-- gui_type = defines.gui_type.entity / custom
+--    close = $function(player, gui_type),            -- gui_type = defines.gui_type.entity / custom
+--    click = $function(nameArr, player, entity) }
 
 -- Required Calls from control.lua:
 -- gui_tick()
@@ -28,8 +30,10 @@ gui = {} -- [$entityName] = { open = $function(player,entity),
 --------------------------------------------------
 
 -- This helper file uses the following global data variables:
--- global.gui.events[$tick] = { {$uiComponentIdentifier, $player}, ... }
+-- global.gui.playerData = { entity = $entity }
+--     "      events[$tick] = { {$uiComponentIdentifier, $player}, ... }
 --     "      version = $number
+--     "      inEvent = $bool                 Used to detect when it should set active entity for player
 
 --------------------------------------------------
 -- Implementation
@@ -40,7 +44,8 @@ function gui_init()
 	if global.gui == nil then
 		global.gui = {
 			events = {},
-			version = 2
+			playerData = {},
+			version = 3
 		}
 	end
 	local prevGui = global.gui.version
@@ -48,9 +53,9 @@ function gui_init()
 		global.gui.version = 1
 		global.itemSelection = nil
 	end
-	if global.gui.version < 2 then
-		global.gui.version = 2
-		global.gui.playerData = nil
+	if global.gui.version < 3 then
+		global.gui.version = 3
+		global.gui.playerData = {}
 	end
 	if global.gui.version ~= prevGui then
 		info("Migrated gui version to "..tostring(global.gui.version))
@@ -62,9 +67,13 @@ local function handleEvent(uiComponentIdentifier,player)
 	local eventIsForMod = table.remove(guiEvent,1)
 	if eventIsForMod == modName then
 		local entityName = player.opened_gui_type == defines.gui_type.entity and player.opened.name or nil
+		if entityName == nil then
+			entityName = player.opened_gui_type == defines.gui_type.custom and player.opened.name or nil
+		end
 		if entityName and gui[entityName] then
 			if gui[entityName].click ~= nil then
-				gui[entityName].click(guiEvent,player,player.opened)
+				local pdata = private.playerData(player.name)
+				gui[entityName].click(guiEvent,player,pdata.entity)
 			end
 		elseif entityName == nil then
 			local entityName = table.remove(guiEvent,1)
@@ -104,16 +113,49 @@ end
 
 function gui_open(event)
 	local entity = event.entity
-	if entity and gui[entity.name] then
-		gui[entity.name].open(game.players[event.player_index],entity)
+	local player = game.players[event.player_index]
+	local pdata = private.playerData(player.name)
+	local root = not global.gui.inEvent
+	if root then 
+		pdata.entity = entity
+		global.gui.inEvent = true
+	end
+	if entity and gui[entity.name] and gui[entity.name].open then
+		gui[entity.name].open(player, entity, event.gui_type)
+	end
+	if root then
+		global.gui.inEvent = false
 	end
 end
 
+
 function gui_close(event)
 	local entity = event.entity
-	if entity and gui[entity.name] then
-		gui[entity.name].close(game.players[event.player_index])
+	local player = game.players[event.player_index]
+	local pdata = private.playerData(player.name)
+	local root = not global.gui.inEvent
+	if root then 
+		pdata.entity = nil
+		global.gui.inEvent = true
 	end
+	if entity and gui[entity.name] and gui[entity.name].close then
+		gui[entity.name].close(player, event.gui_type)
+	end
+	local element = event.element
+	if element and gui[element.name] and gui[element.name].close then
+		gui[element.name].close(player, event.gui_type)
+	end
+	if root then
+		global.gui.inEvent = false
+	end
+end
+
+
+private.playerData = function(playerName)
+	if not global.gui.playerData[playerName] then
+		global.gui.playerData[playerName] = {}
+	end
+	return global.gui.playerData[playerName]
 end
 
 --------------------------------------------------

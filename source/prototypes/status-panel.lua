@@ -27,37 +27,37 @@ data:extend({
 
 
 -- Entity
-local statusPanel = table.deepcopy(data.raw["lamp"]["small-lamp"])
+local statusPanel = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
 overwriteContent(statusPanel, {
 	name = "status-panel",
 	energy_usage_per_tick = "45KW",
 	collision_box = {{-0.45, -1.45}, {0.45, 1.45}},
   selection_box = {{-0.5, -1.5}, {0.5, 1.5}},
-	light = {intensity = 0.1, size = 5, color = {r=1.0, g=1.0, b=1.0}},
 	icon = "__integratedCircuitry__/graphics/icons/status-panel.png",
 	icon_size = 32,
-	picture_off = {
+	sprites = {
 		filename = "__integratedCircuitry__/graphics/entity/status-panel-base.png",
 		priority = "low",
 		width = 32,
 		height = 96,
-		frame_count = 1,
-		axially_symmetrical = false,
-		direction_count = 1,
-		shift = {0,0},
 	},
-	picture_on = emptyImage(),
-	circuit_wire_connection_point = {
-		shadow =
+	circuit_wire_connection_points = {
 		{
-			red = {0.40625, 1.44},
-			green = {0.40625, 1.47},
+			shadow = { red = {0.40625, 1.44}, green = {0.40625, 1.47} },
+			wire = { red = {0.40625, 1.42}, green = {0.40625, 1.45} }
 		},
-		wire =
 		{
-			red = {0.40625, 1.42},
-			green = {0.40625, 1.45},
-		}
+			shadow = { red = {0.40625, 1.44}, green = {0.40625, 1.47} },
+			wire = { red = {0.40625, 1.42}, green = {0.40625, 1.45} }
+		},
+		{
+			shadow = { red = {0.40625, 1.44}, green = {0.40625, 1.47} },
+			wire = { red = {0.40625, 1.42}, green = {0.40625, 1.45} }
+		},
+		{
+			shadow = { red = {0.40625, 1.44}, green = {0.40625, 1.47} },
+			wire = { red = {0.40625, 1.42}, green = {0.40625, 1.45} }
+		},
 	},
 	circuit_connector_sprites = nil,
 	minable = {

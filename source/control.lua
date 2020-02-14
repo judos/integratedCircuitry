@@ -41,17 +41,12 @@ script.on_configuration_changed(function()
 	local ic = global.integratedCircuitry
 	local previousVersion = ic.version
 	if ic.version < "0.1.1" then
-		migrate_0_1_1()
-		ic.version = "0.1.1"
+		err("Migration from earlier version not supported!")
 	end
 	if ic.version ~= previousVersion then
 		info("Previous version: "..previousVersion.." migrated to "..ic.version)
 	end
 end)
-
-function migrate_0_1_1()
-	migrate_0_1_1_statusPanel()
-end
 
 ---------------------------------------------------
 -- Tick
