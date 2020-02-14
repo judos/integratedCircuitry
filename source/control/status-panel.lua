@@ -78,6 +78,7 @@ gui["status-panel"].open = function(player,entity)
 	
 	local frame = player.gui.screen.add{type="frame",name="status-panel",direction="vertical",caption={"status-panel"}}
 	frame.add{type="label",name="description",caption={"status-panel-description"}}
+	frame.add{type="label",name="description2",caption={"status-panel-description2"}}
 	frame.add{type="table",name="table",column_count=2}
 
 	frame.table.add{type="label",name="title",caption={"",{"signal"},":"}}
@@ -104,14 +105,11 @@ end
 
 gui["status-panel"].click = function(nameArr,player,entity)
 	local fieldName = table.remove(nameArr,1)
-	info(fieldName)
 	if fieldName == "signal" then
 		local box = player.gui.screen["status-panel"].table["integratedCircuitry.signal"]
 		local signal = box.elem_value
 		if signal then
-			info(signal)
 			local p = prototypesForGroup(signal.type)
-			info(p)
 			local prototype = p[signal.name]
 			m.setSignal(player,entity,{type=signal.type,name=signal.name,prototype=prototype})
 		else
