@@ -81,7 +81,7 @@ gui["status-panel"].open = function(player,entity)
 	frame.add{type="table",name="table",column_count=2}
 
 	frame.table.add{type="label",name="title",caption={"",{"signal"},":"}}
-	frame.table.add{type="choose-elem-button",name="integratedCircuitry.signal",elem_type="item"}
+	frame.table.add{type="choose-elem-button",name="integratedCircuitry.signal",elem_type="signal"}
 	
 	frame.table.add{type="label",name="min",caption={"",{"red_value"},":"}}
 	frame.table.add{type="textfield",name="integratedCircuitry.min"}
@@ -107,10 +107,13 @@ gui["status-panel"].click = function(nameArr,player,entity)
 	info(fieldName)
 	if fieldName == "signal" then
 		local box = player.gui.screen["status-panel"].table["integratedCircuitry.signal"]
-		local itemName = box.elem_value
-		if itemName then
-			local prototype = prototypesForGroup("item")[itemName]
-			m.setSignal(player,entity,{type="item",name=itemName,prototype=prototype})
+		local signal = box.elem_value
+		if signal then
+			info(signal)
+			local p = prototypesForGroup(signal.type)
+			info(p)
+			local prototype = p[signal.name]
+			m.setSignal(player,entity,{type=signal.type,name=signal.name,prototype=prototype})
 		else
 			m.setSignal(player,entity,nil)
 		end
@@ -144,7 +147,7 @@ m.writeDataToConfig = function(data, entity)
 	local cir = entity.get_or_create_control_behavior()
 	-- order of slots is relevant! See method "copyFromOtherIfAvailable"
 	if data.signal then
-		cir.set_signal(1, {signal={type="item", name=data.signal.name}, count=0})
+		cir.set_signal(1, {signal={type=data.signal.type, name=data.signal.name}, count=0})
 	else
 		cir.set_signal(1, nil)
 	end
@@ -187,7 +190,7 @@ m.updateGui = function(player,entity)
 	tab["integratedCircuitry.max"].text = data.max or ""
 	local signal = tab["integratedCircuitry.signal"]
 	if data.signal then
-		signal.elem_value = data.signal.name
+		signal.elem_value = data.signal
 	else
 		signal.elem_value = nil
 	end		

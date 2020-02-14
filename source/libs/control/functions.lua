@@ -11,7 +11,7 @@ prototypesForGroup = function(type)
 		return game.item_prototypes
 	elseif type == "fluid" then
 		return game.fluid_prototypes
-	elseif type == "signal" then
+	elseif type == "signal" or type == "virtual" then
 		return game.virtual_signal_prototypes
 	end
 end
