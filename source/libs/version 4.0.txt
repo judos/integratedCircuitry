@@ -9,6 +9,8 @@ TODO 4.0:
 	entitieS: added die event
 	entities: build now supports 2nd param: player (is nil for robots)
 	lua.table: added "appendTable"
+	gui: fixed error when element name has modName.entityName and entityName doesn't exist
+	gui: use events instead of polling gui
 	MIGRATION:
 		removed deepcopy, use table.deepcopy from 'require "util"' instead
 		instead of string.starts use string.startsWith

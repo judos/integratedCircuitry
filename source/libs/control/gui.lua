@@ -28,9 +28,7 @@ gui = {} -- [$entityName] = { open = $function(player,entity),
 --------------------------------------------------
 
 -- This helper file uses the following global data variables:
--- global.gui.playerData[$playerName].openGui = $(name of opened entity)
---                                   .openEntity = $(reference of LuaEntity)
---     "      events[$tick] = { {$uiComponentIdentifier, $player}, ... }
+-- global.gui.events[$tick] = { {$uiComponentIdentifier, $player}, ... }
 --     "      version = $number
 
 --------------------------------------------------
@@ -41,15 +39,18 @@ gui = {} -- [$entityName] = { open = $function(player,entity),
 function gui_init()
 	if global.gui == nil then
 		global.gui = {
-			playerData = {},
 			events = {},
-			version = 1
+			version = 2
 		}
 	end
 	local prevGui = global.gui.version
 	if not global.gui.version then
 		global.gui.version = 1
 		global.itemSelection = nil
+	end
+	if global.gui.version < 2 then
+		global.gui.version = 2
+		global.gui.playerData = nil
 	end
 	if global.gui.version ~= prevGui then
 		info("Migrated gui version to "..tostring(global.gui.version))
@@ -60,19 +61,17 @@ local function handleEvent(uiComponentIdentifier,player)
 	local guiEvent = split(uiComponentIdentifier,".")
 	local eventIsForMod = table.remove(guiEvent,1)
 	if eventIsForMod == modName then
-		local entityName = global.gui.playerData[player.name].openGui
+		local entityName = player.opened_gui_type == defines.gui_type.entity and player.opened or nil
 		if entityName and gui[entityName] then
 			if gui[entityName].click ~= nil then
-				local entity = global.gui.playerData[player.name].openEntity
-				gui[entityName].click(guiEvent,player,entity)
+				gui[entityName].click(guiEvent,player,player.opened)
 			end
 		elseif entityName == nil then
 			local entityName = table.remove(guiEvent,1)
-			if gui[entityName].click ~= nil then
+			if gui[entityName] and gui[entityName].click ~= nil then
 				gui[entityName].click(guiEvent,player,nil)
 			else
-				warn("No entityName found for player "..player.name)
-				warn(global.gui.playerData[player.name])
+				info("No entityName found for player "..player.name)
 			end
 		else
 			warn("No gui registered for "..entityName)
@@ -89,22 +88,6 @@ function gui_scheduleEvent(uiComponentIdentifier,player)
 	table.insert(global.gui.events,{uiComponentIdentifier=uiComponentIdentifier,player=player})
 end
 
-local function playerCloseGui(player,playerData,openGui)
-	if gui[openGui] ~= nil and gui[openGui].close ~= nil then
-		gui[openGui].close(player)
-	end
-	playerData.openGui = nil
-	playerData.openEntity = nil
-end
-
-local function playerOpenGui(player,playerData,openEntity)
-	local openGui = openEntity.name -- TODO #35: LuaEquipmentGrid doesn't contain key name.
-	playerData.openGui = openGui
-	playerData.openEntity = openEntity
-	if gui[openGui] ~= nil and gui[openGui].open ~= nil then
-		gui[openGui].open(player,openEntity)
-	end
-end
 
 function gui_tick()
 	if game.tick % guiUpdateEveryTicks ~= 0 then return end
@@ -117,23 +100,21 @@ function gui_tick()
 			end
 		end
 	end
-	for _,player in pairs(game.players) do
-		if player.connected and (player.opened_gui_type == defines.gui_type.none or player.opened_gui_type == defines.gui_type.entity) then
-			local openEntity = player.opened
-			local playerName = player.name
-			if global.gui.playerData[playerName] == nil then global.gui.playerData[playerName] = {} end
-			local playerData = global.gui.playerData[playerName]
-			local openGui = playerData.openGui
-			if openGui ~= nil and playerData.openEntity ~= openEntity then
-				playerCloseGui(player,playerData,openGui)
-			end
-			if openGui == nil and openEntity ~= nil then
-				playerOpenGui(player,playerData,openEntity)
-			end
-		end
+end
+
+function gui_open(event)
+	local entity = event.entity
+	if entity and gui[entity.name] then
+		gui[entity.name].open(game.players[event.player_index],entity)
 	end
 end
 
+function gui_close(event)
+	local entity = event.entity
+	if entity and gui[entity.name] then
+		gui[entity.name].close(game.players[event.player_index])
+	end
+end
 
 --------------------------------------------------
 -- Event registration
@@ -148,6 +129,8 @@ end
 script.on_event(defines.events.on_gui_click,handleGuiEvent)
 script.on_event(defines.events.on_gui_text_changed,handleGuiEvent)
 script.on_event(defines.events.on_gui_elem_changed,handleGuiEvent)
+script.on_event(defines.events.on_gui_opened,gui_open)
+script.on_event(defines.events.on_gui_closed,gui_close)
 --script.on_event(defines.events.on_gui_checked_state_changed,handleGuiEvent)
 
 --------------------------------------------------
