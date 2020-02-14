@@ -62,6 +62,8 @@ guiMethods.open = function(player, entity)
 	
 	local dx = math.random()*2 - 0.5
 	local dy = math.random()*2 - 0.5
+	
+	player.opened=nil
 	player.teleport({data.chunkPos[1]*32+16+dx,data.chunkPos[2]*32+16+dy},Surface.get())
 	
 	player.gui.left.add{type="button",name=teleportBackButtonName,caption={"compact-combinator.leave"}}
