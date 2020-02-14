@@ -58,6 +58,13 @@ data:extend({	entity })
 addTechnologyUnlocksRecipe("circuit-network","compact-combinator")
 
 
+-- Floor
+local concreteFloor = table.deepcopy(data.raw["tile"]["refined-concrete"])
+concreteFloor.name = "compact-combinator-floor"
+concreteFloor.minable = nil
+data:extend({ concreteFloor })
+	
+
 
 -- Port outside (no graphics)
 local entity = table.deepcopy(data.raw["electric-pole"]["small-electric-pole"])

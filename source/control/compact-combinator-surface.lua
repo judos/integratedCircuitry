@@ -60,7 +60,7 @@ function Surface.placeTiles(chunkPos, size)
 	local tiles = {}
 	local area = Surface.chunkArea(chunkPos, size)
 	for x=area[1][1],area[2][1]-1 do for y=area[1][2],area[2][2]-1 do
-		table.insert(tiles,{name="refined-concrete",position={x,y}})
+		table.insert(tiles,{name="compact-combinator-floor",position={x,y}})
 	end end
 	Surface.get().set_tiles(tiles)
 end

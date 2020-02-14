@@ -1,9 +1,6 @@
 
 TODO IntegratedCircuitry:
 
-- easier exit in compact-combinator
-- No concrete floor but land which can't be mined
-
 - Status panel should copy settings in blueprint
 - Virtual signals for status panel
 
