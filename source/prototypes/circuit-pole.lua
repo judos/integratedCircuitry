@@ -41,6 +41,7 @@ overwriteContent(circuitPole, {
 	},
 	maximum_wire_distance = 15,
 	supply_area_distance = 0,
+	draw_copper_wires = false,
 	pictures = {
 		filename = "__integratedCircuitry__/graphics/entity/circuit-pole.png",
 		priority = "extra-high",

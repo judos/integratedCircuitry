@@ -23,11 +23,9 @@ function circuitPole_build_electric_pole(entity)
 	
 	for _,arr in pairs(d) do
 		local e = arr.entity
-		if e.name ~= "circuit-pole" and not string.startsWith(e.name, "compact-combinator") then
-			entity.connect_neighbour(e)
-			if # entity.neighbours.copper >= 2 then
-				break
-			end
+		entity.connect_neighbour(e)
+		if # entity.neighbours.copper >= 2 then
+			break
 		end
 	end
 	
@@ -39,7 +37,7 @@ end
 ---------------------------------------------------
 
 circuitPole.build = function(entity)
-	entity.disconnect_neighbour()
+	--entity.disconnect_neighbour()
 	entity.operable = false
 	return {
 	}
