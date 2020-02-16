@@ -30,6 +30,7 @@ local indicator = table.deepcopy(data.raw["lamp"]["small-lamp"])
 local REMOVE = "__REMOVE__"
 overwriteContent(indicator, {
 	name = "lamp-panel",
+	fast_replaceable_group = "lamp",
 	energy_usage_per_tick = "15KW",
 	collision_box = {{-0.4,-0.4},{0.4,0.4}},
 	collision_mask = {"water-tile", "item-layer", "object-layer"},
@@ -61,15 +62,15 @@ overwriteContent(indicator, {
 	},
 	circuit_wire_connection_point =
     {
-      shadow =
-      {
-        red = {0.40625, 0.44},
-        green = {0.40625, 0.47},
-      },
       wire =
       {
-        red = {0.40625, 0.42},
-        green = {0.40625, 0.45},
+        red = {0.5, 0.5},
+        green = {0.5, 0.5},
+      },
+			shadow =
+      {
+        red = {0.5, 0.5},
+        green = {0.5, 0.5},
       }
     },
 }, REMOVE)
