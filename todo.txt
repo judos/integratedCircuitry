@@ -1,5 +1,10 @@
 
 TODO IntegratedCircuitry:
 
+
+- Pixel -> light with integrated arithmetic combinator
+	- on build set arithmetic to: each - a -> each
+
+
 FAQ:
 - allow belts, chests, inserters: NO! Not gonna happen for copy/paste
