@@ -207,6 +207,7 @@ statusPanel.tick = function(statusPanel,data)
 		data.sprite.graphics_variation = 1
 		return 60,nil
 	end
+	statusPanel.direction = 0
 	
 	local signalGreen = statusPanel.get_circuit_network(defines.wire_type.green,1)
 	local signalRed = statusPanel.get_circuit_network(defines.wire_type.red,1)

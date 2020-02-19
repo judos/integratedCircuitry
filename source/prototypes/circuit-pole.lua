@@ -34,6 +34,7 @@ overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	place_result = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
+	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	minable = {
 		hardness = circuitPole.minable.hardness, 
 		mining_time = circuitPole.minable.mining_time, 
