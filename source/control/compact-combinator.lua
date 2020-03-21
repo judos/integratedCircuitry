@@ -343,7 +343,9 @@ private.pasteStructuresIfBlueprinted = function(data, entity)
 	data.chest = entity.surface.create_entity{
 		name="steel-chest",position={entity.position.x-0.5,entity.position.y},force=entity.force
 	}
-	data.chest.operable=false
+	data.chest.operable=true
+	data.chest.destructible = false
+	data.chest.minable = false
 	data.proxy = entity.surface.create_entity{
 		name="item-request-proxy",position=data.chest.position,target=data.chest,modules=request,force=entity.force
 	}
