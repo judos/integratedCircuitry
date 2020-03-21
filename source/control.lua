@@ -10,6 +10,8 @@ require "control.circuit-pole"
 require "control.compact-combinator"
 require "control.compact-combinator-allowedBuildings"
 require "control.compact-combinator-ghost"
+require "control.monochrom-display-row"
+require "control.color-display-row"
 
 
 -- global data used:

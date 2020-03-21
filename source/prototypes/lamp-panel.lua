@@ -24,7 +24,7 @@ data:extend({
 		result = "lamp-panel"
 	}
 })
-
+addTechnologyUnlocksRecipe("optics","lamp-panel")
 
 -- Entity
 local indicator = table.deepcopy(data.raw["lamp"]["small-lamp"])
@@ -87,4 +87,3 @@ indicator.minable.result = "lamp-panel"
 data:extend({	indicator })
 
 
-addTechnologyUnlocksRecipe("optics","lamp-panel")
