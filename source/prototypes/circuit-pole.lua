@@ -5,6 +5,7 @@ local circuitPole = table.deepcopy(data.raw["item"]["small-electric-pole"])
 overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
+	icon_size = 32,
 	subgroup = "circuit-network",
 	order = "b[wires]-c[circuit-pole]",
   place_result = "circuit-pole"
@@ -34,6 +35,7 @@ overwriteContent(circuitPole, {
 	name = "circuit-pole",
 	place_result = "circuit-pole",
 	icon = "__integratedCircuitry__/graphics/icons/circuit-pole.png",
+	icon_size = 32,
 	selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	minable = {
 		hardness = circuitPole.minable.hardness, 

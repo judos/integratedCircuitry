@@ -7,6 +7,7 @@ overwriteContent(indicator, {
 	order = "z[small-lamp]",
 	place_result = "lamp-panel",
 	icon = "__integratedCircuitry__/graphics/icons/lamp-panel.png",
+	icon_size = 32,
 })
 data:extend({	indicator })
 

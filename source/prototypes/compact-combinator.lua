@@ -8,6 +8,7 @@ overwriteContent(item, {
 	order = "c[combinators]-e[compact-combinator]",
 	place_result = "compact-combinator",
 	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
+	icon_size = 32,
 })
 data:extend({	item })
 
@@ -117,6 +118,7 @@ overwriteContent(item, {
 	order = "c[combinators]-e[compact-combinator]",
 	place_result = "compact-combinator-io",
 	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
+	icon_size = 32,
 })
 data:extend({	item })
 
@@ -175,6 +177,7 @@ overwriteContent(item, {
 	order = "c[combinators]-e[compact-combinator]",
 	place_result = "compact-combinator-port",
 	icon = "__integratedCircuitry__/graphics/icons/compact-combinator.png",
+	icon_size = 32,
 })
 data:extend({	item })
 
