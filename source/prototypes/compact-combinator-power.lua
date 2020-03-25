@@ -13,7 +13,7 @@ overwriteContent(entity, {
 	supply_area_distance = 16,
 	maximum_wire_distance = 64,
 	draw_circuit_wires = false,
-	draw_copper_wires = true,
+	draw_copper_wires = false,
 	flags = {
 		"placeable-player",
 		"placeable-enemy",
