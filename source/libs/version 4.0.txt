@@ -1,5 +1,6 @@
 TODO 4.0:
 	move lua/various.round to lua/numbers
+	entities.premie: fixed that it was not called for robots
   
 
 4.0 integratedCircuitry

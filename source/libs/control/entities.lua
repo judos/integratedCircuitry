@@ -301,6 +301,9 @@ function entities_pre_mined(event)
 	if entities[name].premine and event.player_index ~= nil then
 		local data = global.entityData[idOfEntity(entity)]
 		manuallyHandle = entities[name].premine(entity,data,game.players[event.player_index])
+	elseif entities[name].premine then
+		local data = global.entityData[idOfEntity(entity)]
+		manuallyHandle = entities[name].premine(entity,data,nil)
 	end
 	if not manuallyHandle then
 		local checkEntity = scheduleAdd(entity,TICK_ASAP)
