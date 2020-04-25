@@ -1,5 +1,5 @@
 local Surface = require("control.compact-combinator-surface")
-
+require "libs.control.luaentity"
 
 function compactCombinator_checkSurfaceBuildings(entity, player)
 	--if an earlier event handler removed entity return here
@@ -28,6 +28,5 @@ function compactCombinator_checkSurfaceBuildings(entity, player)
 	if t=="electric-pole" then
 		entity.disconnect_neighbour()
 	end
-	player.mine_entity(entity)
-	
+	removeEntity(entity, player)
 end

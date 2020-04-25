@@ -1,7 +1,5 @@
 TODO 4.0:
-	move lua/various.round to lua/numbers
-	entities.premie: fixed that it was not called for robots
-  
+	
 
 4.0 integratedCircuitry
 	gui: events without open gui: string part is used as entityName to send event to correct codepart gui:70
@@ -12,9 +10,12 @@ TODO 4.0:
 	lua.table: added "appendTable"
 	gui: fixed error when element name has modName.entityName and entityName doesn't exist
 	gui: use events instead of polling gui
+	entities.premine: fixed that it was not called for robots
+	control.luaentity: added method to remove entity (built by player or robot)
 	MIGRATION:
 		removed deepcopy, use table.deepcopy from 'require "util"' instead
 		instead of string.starts use string.startsWith
+		move lua/various.round to lua/numbers.round
 
 
 3.9 beltSorter
