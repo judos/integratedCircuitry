@@ -1,6 +1,6 @@
 {
 	"name": "integratedCircuitry",
-	"version": "0.18.0",
+	"version": "0.18.1",
 	"title": "Integrated Circuitry",
 	"author": "judos",
 	"description": "Nicer lamps for status indication, Status bars to show level of items, fixed circuit wire overlapping, and more coming...",

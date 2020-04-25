@@ -1,22 +1,33 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.18.1
+  Trivial:
+    - Improved changelog
+
+---------------------------------------------------------------------------------------------------
 Version: 0.18.0
   Fixes:
     - Fixed compact-combinator recipe not unlocked when save is migrated
-    - Fix crash when building disallowed entities inside compact-combinator with robots
+    - Fix crash when building disallowed entities inside compact-combinator with 
+      robots
     - Fixed display-rows not unlocked when save is migrated
     - Entering invalid letters in status-panel doesn't clear value
     - Pressing E when editing numbers in status-panel closes panel
     - Fix display-rows could not be blueprinted
     - Fix status-panel could not be blueprinted
-    - Fix all entities not correctly initialized when built with Construction drone due 
-      to missing event handling
+    - Fix all entities not correctly initialized when built with Construction
+      drone due to missing event handling
     - Fix deconstructing compact-combinator with status-panel inside crashes game
-    - Fixed blueprint requester chest not removed when compact combinator is removed before finished requesting items
+    - Fixed blueprint requester chest not removed when compact combinator is 
+      removed before finished requesting items
   Changes:
-    - Removed alt-info from compact-combinator and status-panel as they are not interesting
-    - Switch monochrom-display. A signal now is the top lamp like in colored display row
-    - Removed steel-chest graphics when blueprinted compact-combinator requested items to build content
-		- Blueprints with compact-combinators may now be rotated. For old blueprints a warning is printed
+    - Removed alt-info from compact-combinator and status-panel as they are not 
+      interesting
+    - Switch monochrom-display. A signal now is the top lamp like in colored 
+      display row
+    - Removed steel-chest graphics when blueprinted compact-combinator requested 
+      items to build content
+    - Blueprints with compact-combinators may now be rotated. For old blueprints 
+      a warning is printed
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.8
