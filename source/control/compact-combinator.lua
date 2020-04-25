@@ -210,7 +210,22 @@ entityMethods.premine = function(entity, data, player)
 		if inserted < count then
 			allReceived = false
 			local remaining = count - inserted
-			entity.surface.spill_item_stack(entity.position, {name=item, count=remaining}, true, player and nil or entity.force, false)
+			local stackTable = entity.surface.spill_item_stack(
+				entity.position, {name=item, count=remaining}, true, 
+				player and nil or entity.force, false
+			)
+			-- NOTE: construction drones do not pickup items regardless of these trials:
+			--for _, stack in pairs(stackTable) do
+			--	info(stack)
+			--	stack.cancel_deconstruction(entity.force)
+			--	stack.order_deconstruction(entity.force)
+			--	script.raise_event(defines.events.script_raised_built, {
+			--		entity = stack
+			--	})
+			--	script.raise_event(defines.events.on_marked_for_deconstruction, {
+			--		entity = stack
+			--	})
+			--end
 		end
 	end
 	if allReceived and itemsReceived > 0 then

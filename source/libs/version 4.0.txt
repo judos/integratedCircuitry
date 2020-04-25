@@ -12,6 +12,7 @@ TODO 4.0:
 	gui: use events instead of polling gui
 	entities.premine: fixed that it was not called for robots
 	control.luaentity: added method to remove entity (built by player or robot)
+	entities: support for more events when entity is built
 	MIGRATION:
 		removed deepcopy, use table.deepcopy from 'require "util"' instead
 		instead of string.starts use string.startsWith

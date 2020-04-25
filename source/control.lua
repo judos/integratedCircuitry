@@ -43,7 +43,7 @@ script.on_configuration_changed(function()
 	local ic = global.integratedCircuitry
 	local previousVersion = ic.version
 	if ic.version < "0.1.1" then
-		err("Migration from earlier version not supported!")
+		err("Migration from version "..ic.version.." not supported!")
 	end
 	if ic.version ~= previousVersion then
 		info("Previous version: "..previousVersion.." migrated to "..ic.version)
@@ -61,35 +61,33 @@ end)
 ---------------------------------------------------
 -- Building Entities
 ---------------------------------------------------
-script.on_event(defines.events.on_built_entity, function(event)
-	local player = game.players[event.player_index]
-	entities_build(event)
-	compactCombinator_checkSurfaceBuildings(event.created_entity, player)
-	-- disconnect power cables to io-ports only meant for circuit cables
-	circuitPole_build_electric_pole(event.created_entity) 
-end)
-script.on_event(defines.events.on_robot_built_entity, function(event)
+
+function on_built(event)
 	local player = nil
+	if event.player_index then
+		player = game.players[event.player_index]
+	end
 	entities_build(event)
-	compactCombinator_checkSurfaceBuildings(event.created_entity, player)
+	
+	local entity = event.created_entity or event.entity or event.destination
+	compactCombinator_checkSurfaceBuildings(entity, player)
 	-- disconnect power cables to io-ports only meant for circuit cables
-	circuitPole_build_electric_pole(event.created_entity) 
-end)
+	circuitPole_build_electric_pole(entity) 
+end
+script.on_event(defines.events.on_built_entity, on_built)
+script.on_event(defines.events.on_robot_built_entity, on_built)
+script.on_event(defines.events.script_raised_built, on_built)
+script.on_event(defines.events.script_raised_revive, on_built)
+script.on_event(defines.events.on_entity_cloned , on_built)
 
 ---------------------------------------------------
 -- Removing entities
 ---------------------------------------------------
-script.on_event(defines.events.on_robot_pre_mined, function(event)
-	entities_pre_mined(event)
-end)
+script.on_event(defines.events.on_robot_pre_mined, entities_pre_mined)
+script.on_event(defines.events.on_pre_player_mined_item, entities_pre_mined)
 
-script.on_event(defines.events.on_pre_player_mined_item, function(event)
-	entities_pre_mined(event)
-end)
-
-script.on_event(defines.events.on_entity_died, function(event)
-	entities_died(event)
-end)
+script.on_event(defines.events.on_entity_died, entities_died)
+script.on_event(defines.events.script_raised_destroy, entities_died)
 
 ---------------------------------------------------
 -- Settings / Deconstruction

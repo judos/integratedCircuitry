@@ -50,6 +50,7 @@ overwriteContent(entity, {
 --		}
 	}
 })
+table.insert(entity.flags, "hide-alt-info")
 entity.circuit_connector_sprites = nil
 entity.fast_replaceable_group = nil
 entity.minable.result = "compact-combinator"

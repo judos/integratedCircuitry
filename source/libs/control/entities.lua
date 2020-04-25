@@ -260,7 +260,7 @@ end
 -- -------------------------------------------------
 
 function entities_build(event)
-	local entity = event.created_entity
+	local entity = event.created_entity or event.entity or event.destination
 	local player = nil
 	if event.player_index ~= nil then
 		player = game.players[event.player_index]
