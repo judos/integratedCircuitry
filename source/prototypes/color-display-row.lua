@@ -47,13 +47,6 @@ overwriteContent(entity, {
 	energy_source = {
 		type = "void",
 	},
-	flags = {
-		"placeable-player",
-		"hide-alt-info",
-		"not-upgradable",
-		"hidden",
-		"not-rotatable"
-	},
 	picture_off = {
 		filename = "__integratedCircuitry__/graphics/entity/color-display-row.png",
 		priority = "extra-high",
