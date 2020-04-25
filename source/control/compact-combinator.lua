@@ -202,9 +202,7 @@ entityMethods.premine = function(entity, data, player)
 	end
 	if data.power then data.power.destroy() end
 	if data.substation then data.substation.destroy() end
-	if data.chest then
-		removeEntity(data.chest)
-	end
+	if data.chest then data.chest.destroy() end
 	local itemsDropped = Surface.freeSpot(data.chunkPos) --removes all entities inside
 		
 	local allReceived = true
