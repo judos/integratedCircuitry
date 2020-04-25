@@ -12,4 +12,6 @@ for i, force in pairs(game.forces) do
 	check(force, "circuit-network","compact-combinator")
 	check(force, "optics", "lamp-panel")
 	check(force, "optics", "status-panel")
+	check(force, "optics", "monochrom-display-row")
+	check(force, "optics", "color-display-row")
 end
