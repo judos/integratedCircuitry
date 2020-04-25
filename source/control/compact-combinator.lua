@@ -191,14 +191,18 @@ entityMethods.premine = function(entity, data, player)
 		end
 	end
 	if data.io then
-		for k,e in pairs(data.io) do
-			e.destroy()
-		end
+		for _,e in pairs(data.io) do e.destroy() end
 	end
 	if data.poles then
-		for k,e in pairs(data.poles) do
-			e.destroy()
-		end
+		for _,e in pairs(data.poles) do e.destroy() end
+	end
+	if data.ports then
+		for _,e in pairs(data.ports) do e.destroy() end
+	end
+	if data.power then data.power.destroy() end
+	if data.substation then data.substation.destroy() end
+	if data.chest then
+		removeEntity(data.chest)
 	end
 	local itemsDropped = Surface.freeSpot(data.chunkPos) --removes all entities inside
 		
