@@ -360,7 +360,9 @@ private.pasteStructuresIfBlueprinted = function(data, entity)
 		request[v.ghost_name] = (request[v.ghost_name] or 0) + 1
 	end
 	data.chest = entity.surface.create_entity{
-		name="steel-chest",position={entity.position.x-0.5,entity.position.y},force=entity.force
+		name = "compact-combinator-request-chest",
+		position = { entity.position.x, entity.position.y },
+		force = entity.force
 	}
 	data.chest.operable=true
 	data.chest.destructible = false

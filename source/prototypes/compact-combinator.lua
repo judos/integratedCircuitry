@@ -65,7 +65,27 @@ local concreteFloor = table.deepcopy(data.raw["tile"]["refined-concrete"])
 concreteFloor.name = "compact-combinator-floor"
 concreteFloor.minable = nil
 data:extend({ concreteFloor })
-	
+
+
+
+-- Chest for requesting blueprinted items
+local _NIL_ = "__REMOVE__"
+local entity = table.deepcopy(data.raw["container"]["steel-chest"])
+overwriteContent(entity, {
+	name="compact-combinator-request-chest",
+	order="zzz",
+	selection_box = _NIL_,
+	picture = {
+		filename = "__integratedCircuitry__/graphics/empty4x1.png",
+		priority = "extra-high",
+		width = 1,
+		height = 1,
+		direction_count = 1,
+		shift = {0, 0}
+	},
+}, _NIL_)
+table.insert(entity.flags, "placeable-off-grid")
+data:extend({ entity })
 
 
 -- Port outside (no graphics)

@@ -11,9 +11,11 @@ Version: 0.18.0
     - Fix all entities not correctly initialized when built with Construction drone due 
       to missing event handling
     - Fix deconstructing compact-combinator with status-panel inside crashes game
+    - Fixed blueprint requester chest not removed when compact combinator is removed before finished requesting items
   Changes:
     - Removed alt-info from compact-combinator and status-panel as they are not interesting
     - Switch monochrom-display. A signal now is the top lamp like in colored display row
+    - Removed steel-chest graphics when blueprinted compact-combinator requested items to build content
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.8
