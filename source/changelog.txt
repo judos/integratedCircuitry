@@ -16,6 +16,7 @@ Version: 0.18.0
     - Removed alt-info from compact-combinator and status-panel as they are not interesting
     - Switch monochrom-display. A signal now is the top lamp like in colored display row
     - Removed steel-chest graphics when blueprinted compact-combinator requested items to build content
+		- Blueprints with compact-combinators may now be rotated. For old blueprints a warning is printed
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.8

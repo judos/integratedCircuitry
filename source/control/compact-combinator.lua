@@ -30,7 +30,7 @@ local private = {} -- private methods
 
 -- Used data:
 -- {
---		version = 1 (in the current version)
+--		version = 2 (1=old without direction, 2=with direction stored)
 --		id = nr (reference for blueprint)
 --		io = { [1-12] = entity } circuit-pole which is used as input/output
 --		poles = { [1-24] = entity } big poles to connect all cables
@@ -90,6 +90,7 @@ guiMethods.click = function(nameArr, player, entity)
 		-- Note: entity is nil here because there is no open UI
 		private.returnPlayer(player)
 	elseif button == "close" then
+		-- closing the information frame when first entering a compact-combinator
 		player.gui.center[informationFrame].destroy()
 	end
 end
@@ -103,7 +104,7 @@ end
 entityMethods.build = function(entity, player)
 	local position = entity.position
 	local data = {
-		version = 1,
+		version = 2,
 		id = private.generateId(),
 		io = {},
 		poles = {},
@@ -239,6 +240,11 @@ entityMethods.premine = function(entity, data, player)
 	end
 end
 
+entityMethods.rotate = function(entity, data)
+	data.version = 2
+	private.writeDataToCombinator(data, entity)
+end
+
 entityMethods.die = function(entity, data)
 	entityMethods.premine(entity, data)
 end
@@ -268,8 +274,6 @@ entityMethods.tick = function(entity,data)
 			return nil --don't update anymore
 		end
 	end
-	
-	
 	
 	return 60 --sleep to next update
 end
@@ -322,6 +326,8 @@ private.returnPlayer = function(player)
 	local entity = pdata.entity
 	if entity.valid then -- might be invalid if removed and player is thrown out
 		local data = global.entityData[idOfEntity(entity)]
+		data.version = 2
+		private.writeDataToCombinator(data, entity)
 		private.updateBlueprintOf(entity, data)
 	end
 	
@@ -347,13 +353,25 @@ end
 private.pasteStructuresIfBlueprinted = function(data, entity)
 	local cir = entity.get_or_create_control_behavior()
 	local id = cir.get_signal(5).count
+	local directionOld = cir.get_signal(6).count
+	if not cir.get_signal(6).signal then
+		local p = entity.position
+		game.print("[font=default-large-bold][color=#aa0000]NOTE:[/color] You built "..
+			"a compact-combinator where the blueprint source did not store the "..
+			"direction at [gps="..p.x..","..p.y.."].[/font]")
+		game.print("[font=default-large-bold]The inside might not be rotated "..
+			"correctly. To prevent such issues rotate your old compact-combinator "..
+			"and check that V=2 in the Output-signals.[/font]")
+	end
 	if id == nil or id == 0 or cir.get_signal(5).signal == nil then return end
 	local surface = Surface.get()
 	local chunkMiddle = Surface.chunkMiddle(data.chunkPos)
 	local blueprint = Surface.templateInventory()[id]
 	if not blueprint.valid or not blueprint.valid_for_read then return end
+	local direction = (entity.direction - directionOld + 8) % 8
 	local entitiesBuilt = blueprint.build_blueprint{
-		surface=surface, force=entity.force, position=chunkMiddle, force_build=true, skip_fog_of_war=false
+		surface=surface, force=entity.force, position=chunkMiddle, 
+		force_build=true, skip_fog_of_war=false, direction=direction
 	}
 	local request = {}
 	for k,v in pairs(entitiesBuilt) do
@@ -361,7 +379,7 @@ private.pasteStructuresIfBlueprinted = function(data, entity)
 	end
 	data.chest = entity.surface.create_entity{
 		name = "compact-combinator-request-chest",
-		position = { entity.position.x, entity.position.y },
+		position = { entity.position.x, entity.position.y + 0.4 },
 		force = entity.force
 	}
 	data.chest.operable=true
@@ -402,6 +420,7 @@ private.writeDataToCombinator = function(data, entity)
 	cir.set_signal(3, {signal={type="virtual", name="signal-S"}, count=data.size})
 	cir.set_signal(4, {signal={type="virtual", name="signal-V"}, count=data.version})
 	cir.set_signal(5, {signal={type="virtual", name="signal-I"}, count=data.id})
+	cir.set_signal(6, {signal={type="virtual", name="signal-D"}, count=entity.direction})
 end
 
 private.generateId = function()

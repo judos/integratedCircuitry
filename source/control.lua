@@ -42,7 +42,7 @@ script.on_configuration_changed(function()
 	entities_init()
 	local ic = global.integratedCircuitry
 	local previousVersion = ic.version
-	if ic.version < "0.1.1" then
+	if ic.version < "0.0.1" then
 		err("Migration from version "..ic.version.." not supported!")
 	end
 	if ic.version ~= previousVersion then
@@ -88,6 +88,11 @@ script.on_event(defines.events.on_pre_player_mined_item, entities_pre_mined)
 
 script.on_event(defines.events.on_entity_died, entities_died)
 script.on_event(defines.events.script_raised_destroy, entities_died)
+
+---------------------------------------------------
+-- Rotating
+---------------------------------------------------
+script.on_event(defines.events.on_player_rotated_entity, entities_rotate)
 
 ---------------------------------------------------
 -- Settings / Deconstruction
