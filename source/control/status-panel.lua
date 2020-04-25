@@ -36,7 +36,6 @@ statusPanel.build = function(entity)
 		force=entity.force
 	}
 	sprite.orientation=0
-	--sprite.insert({name="coal",count=1})
 	sprite.destructible = false
 	sprite.minable = false
 	local data = {
@@ -199,6 +198,7 @@ end
 ---------------------------------------------------
 
 statusPanel.tick = function(statusPanel,data)
+	statusPanel.direction = 0
 	if not data then
 		err("Error occured with status-panel: "..idOfEntity(statusPanel))
 		return 0,nil
@@ -207,7 +207,6 @@ statusPanel.tick = function(statusPanel,data)
 		data.sprite.graphics_variation = 1
 		return 60,nil
 	end
-	statusPanel.direction = 0
 	
 	local signalGreen = statusPanel.get_circuit_network(defines.wire_type.green,1)
 	local signalRed = statusPanel.get_circuit_network(defines.wire_type.red,1)

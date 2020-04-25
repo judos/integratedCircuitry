@@ -35,7 +35,7 @@ overwriteContent(statusPanel, {
   selection_box = {{-0.5, -1.5}, {0.5, 1.5}},
 	icon = "__integratedCircuitry__/graphics/icons/status-panel.png",
 	icon_size = 32,
-	--flags = {"not-rotatable"}, --comment with next version, as direction of existing is fixed via tick logic
+	flags = {"not-rotatable", "hide-alt-info"},
 	sprites = {
 		filename = "__integratedCircuitry__/graphics/entity/status-panel-base.png",
 		priority = "low",
