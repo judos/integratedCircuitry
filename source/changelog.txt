@@ -1,0 +1,18 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.18.0
+  Fixes:
+    - Fixed compact-combinator recipe not unlocked when save is migrated
+    - Fix crash when building disallowed entities inside compact-combinator with robots
+    - Fixed display-rows not unlocked when save is migrated
+    - Entering invalid letters in status-panel doesn't clear value
+    - Pressing E when editing numbers in status-panel closes panel
+    - Fix display-rows could not be blueprinted
+    - Fix status-panel could not be blueprinted
+  Changes:
+    - Removed alt-info from compact-combinator and status-panel as they are not interesting
+    - Switch monochrom-display. A signal now is the top lamp like in colored display row
+
+---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+  Info:
+    - Older version, no detailled changelog available
