@@ -34,6 +34,7 @@ overwriteContent(entity, {
 	collision_box = {{-0.51, -0.51}, {0.51, 0.51}},
   selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
 	inventory_size = 0,
+	flags = {"not-rotatable", "hide-alt-info"},
 	sprites = {
 		filename = "__integratedCircuitry__/graphics/entity/compact-combinator.png",
 		priority = "extra-high",
