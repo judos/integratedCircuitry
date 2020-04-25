@@ -1,5 +1,6 @@
 require "libs.control.functions"
 require "util"
+require "libs.logging"
 
 -- Registering entity into system
 local statusPanel = {}
@@ -103,6 +104,7 @@ gui["status-panel"].close = function(player, typ)
 end
 
 gui["status-panel"].click = function(nameArr,player,entity)
+	local closeGui = false
 	local fieldName = table.remove(nameArr,1)
 	if fieldName == "signal" then
 		local box = player.gui.screen["status-panel"].table["integratedCircuitry.signal"]
@@ -121,12 +123,20 @@ gui["status-panel"].click = function(nameArr,player,entity)
 		local tab = player.gui.screen["status-panel"].table
 		local text = tab["integratedCircuitry."..fieldName].text
 		if text~="" and text~="-" then 
-			text = tonumber(text) or ""
-			tab["integratedCircuitry."..fieldName].text = text -- correct alpha numeric input
+			local textBefore = text
+			if text:find("e") then 
+				closeGui = true 
+			else
+				text = tonumber(text) or data[fieldName] or ""
+				if tostring(text) ~= tostring(textBefore) then
+					tab["integratedCircuitry."..fieldName].text = text -- correct alpha numeric input
+				end
+				data[fieldName] = tonumber(text)
+			end
 		end
-		data[fieldName] = tonumber(text)
 		m.writeDataToConfig(data, entity)
 	end
+	if closeGui then player.opened = nil end
 end
 
 m.loadDataFromConfig = function(entity, data)
