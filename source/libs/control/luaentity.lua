@@ -9,16 +9,8 @@ function removeEntity(entity, player)
 		local pos = entity.position
 		local force = entity.force
 		local surface = entity.surface
-		local products = entity.prototype.mineable_properties.products
+		local items = minedItemsFromEntity(entity)
 		entity.destroy()
-		local items = {}
-		for _,t in pairs(products) do
-			if t.type == "item" then
-				if t.probability == nil or math.random()<=t.probability then
-					table.insert(items, {name=t.name, count=t.amount})
-				end
-			end
-		end
 		for _,stack in pairs(items) do
 			surface.spill_item_stack(pos, stack, true, force, false)
 		end
@@ -26,4 +18,20 @@ function removeEntity(entity, player)
 		--	stack.order_deconstruction(force)
 		--end
 	end
+end
+
+
+function minedItemsFromEntity(entity)
+	local products = entity.prototype.mineable_properties.products
+	local items = {}
+	if products then
+		for _,t in pairs(products) do
+			if t.type == "item" then
+				if t.probability == nil or math.random()<=t.probability then
+					table.insert(items, {name=t.name, count=t.amount})
+				end
+			end
+		end
+	end
+	return items
 end
